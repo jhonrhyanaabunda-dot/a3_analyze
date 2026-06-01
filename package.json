@@ -1,0 +1,24 @@
+{
+  "name": "a3-visibility-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A3 Brands Dealer Visibility Analyzer — real-data SEO/AI visibility audit for car dealerships.",
+  "scripts": {
+    "dev": "next dev -p 9000",
+    "build": "next build",
+    "start": "next start -p 9000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "jspdf": "^4.2.1",
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.10",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.5.3"
+  }
+}

@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dealership Visibility Analyzer · A3 Brands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --emerald: #1DB954;
+    --emerald-12: rgba(29, 185, 84, 0.12);
+    --emerald-20: rgba(29, 185, 84, 0.2);
+    --emerald-30: rgba(29, 185, 84, 0.3);
+    --charcoal: #2C3038;
+    --navy: #0B0D0F;
+    --near-black: #111214;
+    --white: #FFFFFF;
+    --light-gray: #F8F9FA;
+    --vlight-gray: #F0F1F3;
+    --pale-gray: #E5E7EB;
+    --stone: #5A6170;
+    --medium: #8A919C;
+    --danger: #EF4444;
+    --font: 'Sora', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(29,185,84,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(29,185,84,0.06), transparent 55%),
+      var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { max-width: 920px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* ---------- Header ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 900; letter-spacing: 0.02em; font-size: 18px; }
+  .brand .mark {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--emerald); color: var(--charcoal);
+    display: grid; place-items: center; font-weight: 900; font-size: 16px;
+    box-shadow: var(--emerald-30) 0px 4px 24px 0px;
+  }
+  .pill-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--emerald); background: var(--emerald-12); border: 1px solid var(--emerald);
+    padding: 6px 12px; border-radius: 50px;
+  }
+
+  /* ---------- Intro ---------- */
+  .hero-grid { display:grid; grid-template-columns: 1fr 300px; gap: 48px; align-items:center; }
+  .hero-copy { min-width:0; }
+  .hero-mascot { position:relative; }
+  .mascot-frame {
+    position:relative; width:100%; aspect-ratio: 9/16;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .mascot-frame video {
+    width:100%; height:100%; object-fit:contain; display:block;
+  }
+  .mascot-frame .sound {
+    position:absolute; top:12px; right:12px; z-index:2; width:34px; height:34px; border-radius:50%;
+    background:rgba(0,0,0,0.5); color:#fff; border:0; cursor:pointer; display:grid; place-items:center; font-size:14px;
+    backdrop-filter: blur(4px);
+  }
+  .mascot-frame .sound:hover { background:rgba(29,185,84,0.8); color:var(--charcoal); }
+
+  /* ---------- Floating coach ---------- */
+  .coach { position:fixed; right:24px; bottom:24px; z-index:40; display:none; align-items:flex-end; gap:12px; }
+  .coach.show { display:flex; animation: rise 360ms ease both; }
+  .coach .bubble {
+    max-width:230px; background:var(--white); color:var(--charcoal); font-size:13px; line-height:18px; font-weight:500;
+    padding:12px 16px; border-radius:16px 16px 4px 16px; box-shadow: rgba(0,0,0,0.3) 0px 8px 24px;
+    position:relative; margin-bottom:6px;
+  }
+  .coach .avatar {
+    position:relative; width:86px; height:138px; flex:0 0 auto; cursor:pointer; border:0; background:transparent;
+    animation: bob 3.2s ease-in-out infinite;
+  }
+  .coach .avatar video {
+    width:100%; height:100%; object-fit:contain; display:block;
+  }
+  @keyframes bob { 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-6px);} }
+
+  @media (prefers-reduced-motion: reduce) { .coach .avatar { animation:none; } }
+
+  .hero h1 { font-size: 51px; font-weight: 900; line-height: 56px; letter-spacing: 0.02em; margin-bottom: 18px; }
+  .hero h1 .accent { color: var(--emerald); }
+  .hero p.lede { font-size: 16px; line-height: 26px; color: #C9CDD4; max-width: 620px; margin-bottom: 32px; }
+  .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 36px; }
+  .stat { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px 24px; flex: 1 1 180px; }
+  .stat .n { font-size: 35px; font-weight: 900; line-height: 39px; color: var(--emerald); letter-spacing: 0.015em; }
+  .stat .l { font-size: 12px; color: var(--medium); margin-top: 6px; letter-spacing: 0.02em; }
+  .reassure { display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:var(--medium); margin-top:18px; }
+  .reassure span { display:flex; align-items:center; gap:7px; }
+  .reassure .ck { color:var(--emerald); font-weight:900; }
+
+  /* ---------- Buttons ---------- */
+  .btn { font-family: var(--font); cursor: pointer; border: 0; transition: all 180ms ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-primary {
+    background: var(--emerald); color: var(--charcoal); font-size: 14px; font-weight: 600; letter-spacing: 0.015em;
+    padding: 12px 28px; height: 48px; border-radius: 50px; box-shadow: var(--emerald-30) 0px 4px 24px 0px;
+  }
+  .btn-primary:hover { opacity: 0.9; box-shadow: rgba(29,185,84,0.4) 0px 6px 28px 0px; transform: translateY(-1px); }
+  .btn-primary:active { opacity: 0.78; box-shadow: rgba(29,185,84,0.25) 0px 2px 12px 0px; transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; transform:none; }
+  .btn-ghost { background: transparent; color: var(--emerald); font-size: 13px; font-weight: 500; padding: 6px 14px; height: 44px; border-radius: 8px; }
+  .btn-ghost:hover { background: var(--emerald-12); }
+  .btn-ghost:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn:focus-visible { outline: 3px solid var(--emerald); outline-offset: 3px; }
+
+  /* ---------- Stages ---------- */
+  .stage { display: none; }
+  .stage.active { display: block; }
+  .stage.active.anim-fade { animation: rise 320ms ease both; }
+  .stage.active.anim-left { animation: slideL 300ms cubic-bezier(.2,.7,.2,1) both; }
+  .stage.active.anim-right { animation: slideR 300ms cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise   { from { opacity:0; transform:translateY(14px);} to {opacity:1; transform:translateY(0);} }
+  @keyframes slideL { from { opacity:0; transform:translateX(40px);} to {opacity:1; transform:translateX(0);} }
+  @keyframes slideR { from { opacity:0; transform:translateX(-40px);} to {opacity:1; transform:translateX(0);} }
+
+  /* ---------- Progress ---------- */
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; letter-spacing: 0.02em; color: var(--medium); margin-bottom: 10px; }
+  .progress-meta b { color: var(--white); font-weight: 700; }
+  .track { height: 8px; background: rgba(255,255,255,0.07); border-radius: 50px; overflow: hidden; }
+  .fill { height: 100%; width: 0%; background: var(--emerald); border-radius: 50px; box-shadow: var(--emerald-30) 0px 2px 8px 0px; transition: width 320ms cubic-bezier(.2,.7,.2,1); }
+
+  /* ---------- Card ---------- */
+  .card { background: var(--white); color: var(--charcoal); border-radius: 16px; padding: 40px 40px 32px; box-shadow: rgba(0,0,0,0.3) 0px 24px 60px -20px; }
+  .qnum { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--emerald); background: var(--emerald-12); padding: 6px 12px; border-radius: 4px; display: inline-block; margin-bottom: 18px; }
+  .seg-tag { background: var(--charcoal); color:#fff; }
+  .qtext { font-size: 28px; font-weight: 700; line-height: 34px; letter-spacing: 0.01em; margin-bottom: 26px; }
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .opt {
+    text-align: left; width: 100%; background: var(--light-gray); border: 2px solid transparent; border-radius: 12px;
+    padding: 16px 18px; font-family: var(--font); font-size: 15px; font-weight: 500; color: var(--charcoal);
+    cursor: pointer; transition: all 160ms ease; display: flex; align-items: center; gap: 14px;
+  }
+  .opt:hover { border-color: var(--emerald); background: #fff; }
+  .opt:focus-visible { outline: 3px solid var(--emerald); outline-offset: 2px; }
+  .opt .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--pale-gray); flex: 0 0 auto; display: grid; place-items: center; transition: all 160ms ease; }
+  .opt .kbd { margin-left:auto; font-size:11px; color:var(--medium); border:1px solid var(--pale-gray); border-radius:5px; padding:1px 7px; }
+  .opt.selected { border-color: var(--emerald); background: var(--emerald-12); }
+  .opt.selected .dot { border-color: var(--emerald); background: var(--emerald); }
+  .opt.selected .dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+  .card-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; }
+
+  /* ---------- Capture form ---------- */
+  .cap-intro { text-align:center; margin-bottom:8px; }
+  .cap-intro .tease { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--emerald); background:var(--emerald-12); border:1px solid var(--emerald); padding:6px 14px; border-radius:50px; margin-bottom:18px; }
+  .cap-intro h2 { font-size:35px; font-weight:900; line-height:39px; letter-spacing:0.015em; margin-bottom:12px; }
+  .cap-intro p { color:#C9CDD4; font-size:14px; max-width:520px; margin:0 auto 28px; }
+  .preview-score { font-size:13px; color:var(--medium); margin-bottom:24px; }
+  .preview-score b { color:var(--emerald); font-weight:900; font-size:15px; }
+  .field { margin-bottom:16px; text-align:left; }
+  .field label { display:block; font-size:11px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--medium); margin-bottom:8px; }
+  .field input {
+    width:100%; height:48px; background:#fff; color:var(--charcoal); border:1px solid var(--pale-gray); border-radius:8px;
+    padding:12px 16px; font-family:var(--font); font-size:14px; transition:all 160ms ease;
+  }
+  .field input::placeholder { color:var(--medium); }
+  .field input:focus { outline:none; border-color:var(--emerald); box-shadow:0 0 0 3px var(--emerald-12); }
+  .field input.err { border-color:var(--danger); box-shadow:0 0 0 3px rgba(239,68,68,0.15); }
+  .field .msg { font-size:12px; color:var(--danger); margin-top:6px; display:none; }
+  .field input.err + .msg { display:block; }
+  .consent { font-size:11px; color:var(--medium); margin:6px 0 22px; line-height:17px; }
+
+  /* ---------- Analyzing ---------- */
+  .analyzing-card { display:flex; align-items:center; gap:28px; }
+  .analyzing-card .an-mascot { width:120px; flex:0 0 auto; }
+  .analyzing-card .an-mascot video { width:100%; display:block; }
+  .analyzing-card .an-body { flex:1; min-width:0; }
+  .an-title { font-size:24px; font-weight:900; line-height:30px; letter-spacing:0.01em; margin:14px 0 18px; }
+  .an-steps { display:flex; flex-direction:column; gap:10px; }
+  .an-step { display:flex; align-items:center; gap:12px; font-size:14px; color:var(--medium); transition:color .3s ease; }
+  .an-step .dot { width:18px; height:18px; border-radius:50%; border:2px solid var(--pale-gray); flex:0 0 auto; display:grid; place-items:center; font-size:11px; }
+  .an-step.active { color:var(--charcoal); font-weight:600; }
+  .an-step.active .dot { border-color:var(--emerald); }
+  .an-step.done { color:var(--charcoal); }
+  .an-step.done .dot { border-color:var(--emerald); background:var(--emerald); color:#fff; }
+  .an-step.active .dot .spin { width:10px; height:10px; border:2px solid var(--emerald); border-top-color:transparent; border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @media (max-width:720px){ .analyzing-card { flex-direction:column; text-align:center; } .an-step { text-align:left; } }
+
+  /* ---------- Results ---------- */
+  .result-head { text-align: center; margin-bottom: 8px; position: relative; }
+  .score-glow { position:absolute; top:-70px; left:50%; transform:translateX(-50%); width:560px; height:560px; max-width:92vw; border-radius:50%; filter:blur(90px); opacity:0.20; pointer-events:none; z-index:0; transition:background .6s ease; }
+  .rep-head { position:relative; z-index:1; font-size:11px; font-weight:700; letter-spacing:0.10em; text-transform:uppercase; color:var(--medium); margin-bottom:16px; }
+  .rep-head b { color:#C9CDD4; font-weight:700; }
+  .result-head > *:not(.score-glow) { position:relative; z-index:1; }
+  .score-ring { width: 220px; height: 220px; margin: 0 auto 4px; position: relative; }
+  .score-ring svg { position:absolute; top:50%; left:50%; transform: translate(-50%,-50%) rotate(-90deg); display:block; }
+  .ticks { position:absolute; inset:0; pointer-events:none; }
+  .ticks .tick { position:absolute; top:5px; left:50%; width:2px; height:9px; margin-left:-1px; background:rgba(255,255,255,0.30); border-radius:2px; transform-origin:50% 105px; }
+  /* scroll reveal */
+  .reveal { opacity:0; transform:translateY(22px); transition:opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+  .reveal.inview { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{opacity:1;transform:none;} }
+  /* number is the ONLY in-flow child → perfectly centered; label floats below it */
+  .score-ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(-7px); }
+  .score-ring .val .num { font-size: 62px; font-weight: 900; line-height: 1; letter-spacing: -0.01em; }
+  .score-ring .val .den { font-size: 10px; color: var(--medium); letter-spacing: 0.09em; text-transform: uppercase; margin-top: 16px; }
+
+  .eyebrow { text-align:center; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--medium); margin:0 0 18px; display:flex; align-items:center; justify-content:center; gap:12px; }
+  .eyebrow::before, .eyebrow::after { content:""; height:1px; width:42px; background:rgba(255,255,255,0.12); }
+
+  /* impact projection tiles */
+  .proj { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+  .proj .tile { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:26px 22px; text-align:center; position:relative; overflow:hidden; }
+  .proj .tile::after { content:""; position:absolute; left:0; right:0; top:0; height:2px; background:var(--emerald); opacity:0.7; }
+  .proj .tile .big { font-size:40px; font-weight:900; line-height:1; color:var(--emerald); letter-spacing:0.01em; }
+  .proj .tile .cap { font-size:12px; line-height:17px; color:var(--medium); margin-top:10px; }
+  .tier-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--charcoal); background: var(--emerald); padding: 7px 16px; border-radius: 50px; box-shadow: var(--emerald-30) 0px 4px 24px 0px; margin-bottom: 12px; }
+  .result-head h2 { font-size: 35px; font-weight: 900; line-height: 39px; letter-spacing: 0.015em; margin-bottom: 12px; }
+  .result-head p { color: #C9CDD4; font-size: 15px; line-height: 25px; max-width: 600px; margin: 0 auto 22px; }
+
+  .benchmark { max-width:560px; margin:0 auto 36px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:22px 26px; }
+  .benchmark .bm-row { display:flex; justify-content:space-between; font-size:12px; color:var(--medium); margin-bottom:10px; }
+  .benchmark .bm-track { position:relative; height:10px; background:rgba(255,255,255,0.07); border-radius:50px; }
+  .benchmark .bm-you { position:absolute; top:-3px; width:4px; height:16px; background:var(--emerald); border-radius:50px; box-shadow:var(--emerald-30) 0 0 10px; transition:left 900ms cubic-bezier(.2,.7,.2,1); }
+  .benchmark .bm-avg { position:absolute; top:-7px; width:2px; height:24px; background:var(--medium); }
+  .benchmark .bm-note { font-size:13px; line-height:20px; color:#C9CDD4; margin-top:16px; }
+  .benchmark .bm-note b { color:var(--emerald); }
+
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+  .pillar { background: var(--white); color: var(--charcoal); border-radius: 16px; padding: 24px; border: 2px solid transparent; transition: all 180ms ease; }
+  .pillar:hover { transform: translateY(-3px); box-shadow: rgba(0,0,0,0.18) 0px 12px 28px 0px; }
+  .pillar .phead { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+  .pillar .pic { width:34px; height:34px; border-radius:9px; display:grid; place-items:center; font-size:17px; flex:0 0 auto; }
+  .pillar .pt { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--stone); }
+  .pillar .prow { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:12px; }
+  .pillar .pscore { font-size: 34px; font-weight: 900; line-height: 1; }
+  .pillar .pscore small { font-size: 13px; color: var(--medium); font-weight: 600; }
+  .sev { font-size:10px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 9px; border-radius:50px; }
+  .pillar .pbar { height: 7px; background: var(--vlight-gray); border-radius: 50px; overflow: hidden; margin-bottom: 12px; }
+  .pillar .pbar i { display: block; height: 100%; width:0%; border-radius: 50px; }
+  .pillar .pdesc { font-size: 12px; line-height: 18px; color: var(--stone); }
+
+  .gaps { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 8px 32px 16px; margin-bottom: 40px; }
+  .gaps .ghd { display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:24px 0 6px; }
+  .gaps h3 { font-size: 18px; font-weight: 900; letter-spacing: 0.02em; }
+  .gaps .sub { font-size: 12px; color: var(--medium); margin-bottom: 14px; }
+  .gap { display: flex; gap: 18px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.07); }
+  .gap .ic { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 900; font-size: 17px; }
+  .gap .gbody { flex:1; min-width:0; }
+  .gap .gtop { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
+  .gap .gt { font-size: 16px; font-weight: 700; }
+  .gap .impact { font-size:10px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:3px 9px; border-radius:50px; }
+  .gap .said { font-size:12px; color:var(--medium); font-style:italic; margin-bottom:8px; }
+  .gap .said b { color:#C9CDD4; font-style:normal; font-weight:600; }
+  .gap .gd { font-size: 13px; line-height: 20px; color: #B9BEC6; }
+
+  .cta-band { background: linear-gradient(135deg, rgba(29,185,84,0.16), rgba(29,185,84,0.03)); border: 1px solid var(--emerald-20); border-radius: 16px; padding: 40px; display:flex; align-items:center; gap:32px; }
+  .cta-band .cta-text { flex:1; min-width:0; }
+  .cta-band .cta-mascot { width:130px; flex:0 0 auto; }
+  .cta-band .cta-mascot video { width:100%; display:block; }
+  .cta-band h3 { font-size: 28px; font-weight: 900; line-height: 33px; letter-spacing: 0.01em; margin-bottom: 10px; }
+  .cta-band p { font-size: 14px; color: #C9CDD4; margin-bottom: 24px; }
+  .cta-band .urgency { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--emerald); margin-bottom:16px; background:var(--emerald-12); border:1px solid var(--emerald-20); padding:6px 14px; border-radius:50px; }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .footnote { text-align: center; color: var(--medium); font-size: 12px; margin-top: 40px; letter-spacing: 0.02em; }
+
+  /* ---------- Toast ---------- */
+  .toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(80px); background:var(--white); color:var(--charcoal); font-size:13px; font-weight:600; padding:14px 22px; border-radius:50px; box-shadow:rgba(0,0,0,0.3) 0 8px 30px; opacity:0; transition:all 260ms ease; z-index:50; display:flex; align-items:center; gap:10px; }
+  .toast .ck { color:var(--emerald); font-weight:900; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 34px; line-height: 38px; }
+    .card { padding: 28px 22px; }
+    .qtext { font-size: 22px; line-height: 28px; }
+    .pillars { grid-template-columns: 1fr; }
+    .score-ring { width: 170px; height: 170px; }
+    .cap-intro h2, .result-head h2 { font-size:28px; line-height:32px; }
+    .opt .kbd { display:none; }
+    .proj { grid-template-columns: 1fr; }
+    .cta-band { flex-direction:column-reverse; text-align:center; padding:32px 22px; }
+    .cta-band .cta-mascot { width:110px; }
+    .cta-band .urgency { margin-left:auto; margin-right:auto; }
+    .cta-row { justify-content:center; }
+    .gaps { padding:8px 20px 12px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+    .hero-mascot { max-width: 220px; margin: 0 auto; order:-1; }
+    .coach { right:14px; bottom:14px; }
+    .coach .bubble { max-width:150px; font-size:12px; }
+    .coach .avatar { width:62px; height:100px; }
+  }
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  /* ---------- Print / PDF ---------- */
+  @media print {
+    body { background:#fff; color:#000; }
+    .topbar, .cta-band, .btn, .footnote .noprint { display:none !important; }
+    .stage { display:none !important; }
+    #results.active { display:block !important; }
+    .benchmark, .gaps, .proj .tile { background:#fff; border:1px solid #E5E7EB; color:#000; }
+    .result-head h2 { color:#000; }
+    .result-head p, .gap .gd, .gap .gfix, .benchmark .bm-note, .eyebrow { color:#333; }
+    .pillar { border:1px solid #E5E7EB; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="topbar">
+    <div class="brand"><span class="mark">A3</span> A3&nbsp;BRANDS</div>
+    <span class="pill-tag">Dealer Visibility Analyzer</span>
+  </div>
+
+  <!-- ============ INTRO ============ -->
+  <section class="stage active anim-fade" id="intro">
+    <div class="hero">
+     <div class="hero-grid">
+      <div class="hero-copy">
+        <h1>Your competitors are winning the<br><span class="accent">search results.</span> We fix that.</h1>
+        <p class="lede">12 sharp questions. Two minutes. A real read on where your dealership is losing visibility across Google, your OEM site, local pack, and the AI engines shoppers now ask first.</p>
+        <div class="stats">
+          <div class="stat"><div class="n" data-count="12">0</div><div class="l">Diagnostic questions</div></div>
+          <div class="stat"><div class="n" data-count="3">0</div><div class="l">Visibility pillars scored</div></div>
+          <div class="stat"><div class="n"><span data-count="2">0</span><span style="font-size:18px">min</span></div><div class="l">To your custom report</div></div>
+        </div>
+        <button class="btn btn-primary" onclick="start()">START THE ANALYSIS &rarr;</button>
+        <div class="reassure">
+          <span><span class="ck">✓</span> No payment, no obligation</span>
+          <span><span class="ck">✓</span> Built for franchise &amp; OEM dealers</span>
+          <span><span class="ck">✓</span> Instant personalized report</span>
+        </div>
+      </div>
+      <div class="hero-mascot">
+        <div class="mascot-frame">
+          <button class="sound" id="heroSound" onclick="toggleHeroSound()" aria-label="Toggle sound">🔇</button>
+          <video id="heroVideo" autoplay muted loop playsinline preload="auto">
+            <source src="saggy_mascot.webm" type="video/webm" />
+            <source src="saggy_alpha.mov" type="video/quicktime" />
+            <source src="saggy_mascot.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+     </div>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="stage" id="quiz">
+    <div class="progress-wrap">
+      <div class="progress-meta"><span>Question <b id="curN">1</b> of 12</span><span id="pctTxt">8%</span></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
+    <div class="card">
+      <span class="qnum" id="qnum">Question 01</span>
+      <div class="qtext" id="qtext"></div>
+      <div class="options" id="options" role="radiogroup" aria-label="Answer options"></div>
+      <div class="card-nav">
+        <button class="btn btn-ghost" id="backBtn" onclick="prev()">&larr; Back</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="next()" disabled>Next &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAPTURE ============ -->
+  <section class="stage" id="capture">
+    <div class="card">
+      <div class="cap-intro">
+        <span class="tease">⬤ Your report is ready</span>
+        <h2>Where should we send your<br>full visibility report?</h2>
+        <p>We've scored your answers across all three pillars and pulled your top 3 gaps. Drop your details to unlock the full breakdown, and get a copy you can forward to your team.</p>
+        <div class="preview-score">Your preliminary Visibility Score: <b id="previewScore"></b></div>
+      </div>
+      <form id="leadForm" novalidate>
+        <div class="field">
+          <label for="fName">Your name</label>
+          <input id="fName" name="name" type="text" placeholder="Alex Morgan" autocomplete="name" />
+          <div class="msg">Please enter your name.</div>
+        </div>
+        <div class="field">
+          <label for="fDealer">Dealership</label>
+          <input id="fDealer" name="dealership" type="text" placeholder="Morgan Acura of Dallas" autocomplete="organization" />
+          <div class="msg">Please enter your dealership.</div>
+        </div>
+        <div class="field">
+          <label for="fEmail">Work email</label>
+          <input id="fEmail" name="email" type="email" placeholder="alex@morganacura.com" autocomplete="email" inputmode="email" />
+          <div class="msg">Please enter a valid email address.</div>
+        </div>
+        <div class="field">
+          <label for="fSite">Dealership website</label>
+          <input id="fSite" name="website" type="text" placeholder="morganacura.com" autocomplete="url" inputmode="url" />
+          <div class="msg">Please enter your website so we can analyze it.</div>
+        </div>
+        <div class="field">
+          <label for="fCity">City / market</label>
+          <input id="fCity" name="city" type="text" placeholder="Dallas, TX" autocomplete="address-level2" />
+          <div class="msg">Please enter your city or market.</div>
+        </div>
+        <div class="field">
+          <label for="fPhone">Phone <span style="text-transform:none;color:var(--medium)">(optional)</span></label>
+          <input id="fPhone" name="phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel" />
+          <div class="msg"></div>
+        </div>
+        <div class="consent">By submitting, you agree to let A3 Brands email you your report and occasional insights. Unsubscribe anytime. We never sell your data.</div>
+        <div class="card-nav">
+          <button type="button" class="btn btn-ghost" onclick="backToQuiz()">&larr; Back</button>
+          <button type="submit" class="btn btn-primary" id="unlockBtn">UNLOCK MY REPORT &rarr;</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ ANALYZING ============ -->
+  <section class="stage" id="analyzing">
+    <div class="card analyzing-card">
+      <div class="an-mascot">
+        <video autoplay muted loop playsinline preload="auto">
+          <source src="saggy_mascot.webm" type="video/webm" />
+          <source src="saggy_alpha.mov" type="video/quicktime" />
+          <source src="saggy_mascot.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="an-body">
+        <span class="qnum">Live analysis</span>
+        <h2 class="an-title">Pulling your real visibility data…</h2>
+        <div class="an-steps" id="anSteps"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="stage" id="results">
+    <div class="result-head">
+      <div class="score-glow" id="scoreGlow"></div>
+      <div class="rep-head" id="repHead"></div>
+      <div class="score-ring">
+        <div class="ticks">
+          <span class="tick" style="transform:rotate(118.8deg)"></span>
+          <span class="tick" style="transform:rotate(237.6deg)"></span>
+          <span class="tick" style="transform:rotate(306deg)"></span>
+        </div>
+        <svg width="200" height="200">
+          <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="14"/>
+          <circle id="ring" cx="100" cy="100" r="86" fill="none" stroke="#1DB954" stroke-width="14"
+                  stroke-linecap="round" stroke-dasharray="540" stroke-dashoffset="540"
+                  style="filter: drop-shadow(0 0 12px rgba(29,185,84,0.5)); transition: stroke-dashoffset 900ms cubic-bezier(.2,.7,.2,1);"/>
+        </svg>
+        <div class="val"><div class="num" id="scoreNum">0</div><div class="den">Visibility Score</div></div>
+      </div>
+      <div><span class="tier-badge" id="tierBadge"></span></div>
+      <h2 id="tierTitle"></h2>
+      <p id="tierDesc"></p>
+    </div>
+
+    <div class="benchmark reveal">
+      <div class="bm-row"><span>0</span><span>Your market average: <b id="bmAvgTxt">58</b></span><span>100</span></div>
+      <div class="bm-track">
+        <div class="bm-avg" id="bmAvg"></div>
+        <div class="bm-you" id="bmYou"></div>
+      </div>
+      <div class="bm-note" id="bmNote"></div>
+    </div>
+
+    <div class="eyebrow reveal" id="projEyebrow">The opportunity on the table</div>
+    <div class="proj reveal" id="proj"></div>
+
+    <div class="cta-band reveal">
+      <div class="cta-text">
+        <span class="urgency" id="urgency">●&nbsp; Your biggest opportunity right now</span>
+        <h3 id="ctaHead">Want us to close these gaps for you?</h3>
+        <p id="ctaSub">Book a strategy call and we'll walk your real numbers, your Brand DNA, and a 90-day plan to outrank your market.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="bookCall()">BOOK A STRATEGY CALL</button>
+          <button class="btn btn-ghost" onclick="printReport()">⤓ Download / print report</button>
+          <button class="btn btn-ghost" onclick="restart()">Retake</button>
+        </div>
+      </div>
+      <div class="cta-mascot">
+        <video id="ctaVideo" autoplay muted loop playsinline preload="auto">
+          <source src="saggy_mascot.webm" type="video/webm" />
+          <source src="saggy_alpha.mov" type="video/quicktime" />
+          <source src="saggy_mascot.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+
+    <div class="footnote">A3 Brands · Automotive SEO &amp; Dealer Performance · The numbers don't lie.</div>
+  </section>
+
+</div>
+
+<!-- Floating mascot coach (quiz + capture) -->
+<div class="coach" id="coach">
+  <div class="bubble" id="coachBubble">Let's do this, pick whatever's most honest.</div>
+  <div class="avatar" onclick="scrollToActive()" title="Your A3 guide">
+    <video id="coachVideo" autoplay muted loop playsinline preload="auto">
+      <source src="saggy_mascot.webm" type="video/webm" />
+      <source src="saggy_alpha.mov" type="video/quicktime" />
+      <source src="saggy_mascot.mp4" type="video/mp4" />
+    </video>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="ck">✓</span><span id="toastMsg">Saved</span></div>
+
+<script>
+  /* =========================================================
+     CONFIG, wire these to your real endpoints
+     ========================================================= */
+  const CONFIG = {
+    CALENDLY_URL: 'https://calendly.com/a3brands/strategy-call',
+    WEBHOOK_URL : '',          // e.g. a Zapier/Make/CRM catch-hook. Empty = log only.
+    BENCHMARK   : 58,          // market-average visibility score (0-100)
+    STORAGE_KEY : 'a3_visibility_analyzer_v2',
+
+    // ---- REAL DATA (free keys) ----
+    REAL_MODE     : true,                 // false = always use quiz scoring
+    PAGESPEED_KEY : '',                   // Google API key (legacy demo — keys belong in the Next.js server env now)
+    GEMINI_KEY    : '',                   // Gemini API key (legacy demo — see the Next.js /api routes)
+    GEMINI_MODEL  : 'gemini-2.0-flash',   // grounded with Google Search
+  };
+
+  /* =========================================================
+     ANALYTICS, pushes to dataLayer + console; swap for GA/Segment
+     ========================================================= */
+  function track(event, props){
+    const payload = Object.assign({ event, ts: Date.now() }, props||{});
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(payload);
+    if (window.console) console.log('[analytics]', event, props||{});
+  }
+
+  /* =========================================================
+     QUESTIONS
+     Each option scores 1 (worst) -> 4 (best). Q4 is a SEGMENT
+     selector (non-ordinal) and is NOT scored, it themes the report.
+     Pillars: SEARCH (rank/AI/OEM), DATA (measurement), LOCAL (GBP/Brand DNA)
+     ========================================================= */
+  const QUESTIONS = [
+    { p:'SEARCH', q:"Do you know who's actually outranking you on Google in your market right now?",
+      a:["I don't really worry about Google rankings","That's the OEM's job, not mine","I doubt SEO moves the needle for car sales","No, but I'd want to know exactly who's ahead of me"] },
+    { p:'DATA', q:"When your ad spend stays flat but your leads drop, do you know why?",
+      a:["It happens, but cutting back on marketing isn't an option I can question","I just assume it's the market and ride it out","I've been told before it's fixed and it wasn't","No, and figuring that out would be worth a real conversation"] },
+    { p:'SEARCH', q:"How are you showing up when shoppers ask ChatGPT, Gemini, or Google's AI Overviews for the best place to buy?",
+      a:["Nobody's actually buying cars off ChatGPT","My customers don't search like that","Maybe later, that feels like a next-year problem","I don't know, and that gap concerns me"] },
+    { p:'SEGMENT', q:"What's the biggest challenge you're dealing with on the digital side right now?",
+      a:["Honestly, budget, I can't add another spend line","Trusting that any agency will actually deliver","We're fine, sales are good right now","Not enough qualified leads, and I want that solved"],
+      seg:["BUDGET","TRUST","COMPLACENT","LEADS"] },
+    { p:'DATA', q:"Can your current agency show you exactly what they did last month and what it produced?",
+      a:["I pay a provider and assume it's handled","No, and I've been burned by that before","I get a report but can't tell what it's worth","No, and that lack of proof bothers me"] },
+    { p:'DATA', q:"Do you know your true cost per lead from organic versus paid?",
+      a:["I'd need to see ROI before spending anything new","I get plenty of leads from Cars.com and Autotrader anyway","I've heard the cheaper-leads pitch before","No, and knowing that number would change how I budget"] },
+    { p:'SEARCH', q:"How much of your traffic depends on paid ads that stop the moment you stop spending?",
+      a:["A lot, but ads are working, so why change it","I can't justify shifting budget without a guarantee","Every agency says they'll lower my paid dependence","More than I'd like, and that worries me"] },
+    { p:'SEARCH', q:"Is your OEM website pulling the organic traffic it should, or leaking it to competitors?",
+      a:["The OEM handles the website, so it's not on me","I don't think the website really drives sales","I'd need proof it's leaking before I act","I'm not sure, and I'd want that checked"] },
+    { p:'SEARCH', q:"When a competitor with less history outranks you locally, do you know what they're doing differently?",
+      a:["It bugs me, but I assume they just spend more","I don't think rankings really affect my sales","People have promised to fix this before","No, and I'd genuinely want to know their playbook"] },
+    { p:'LOCAL', q:"Are your Google Business Profile and reviews translating into showroom visits, or just sitting there?",
+      a:["We already manage that in-house","Reviews don't really change who walks in","I can't add another thing to the budget right now","Probably just sitting there, and that's a missed opportunity"] },
+    { p:'LOCAL', q:"Do you know how Google actually sees your dealership today, your Brand DNA?",
+      a:["That sounds like agency jargon to me","Not sure that translates into actual car sales","Interesting, but not a priority this quarter","No, and I'd want to see what mine looks like"] },
+    { p:'LOCAL', q:"If we showed you three specific gaps holding your visibility back, would that change how you think about your current strategy?",
+      a:["I'd have to run it by the owner or GM first","Maybe, but I'm skeptical it'd be worth it","Not right now, too much going on","Yes, show me, I'm ready to act"] },
+  ];
+
+  const PILLAR_META = {
+    SEARCH: { label:'Search & AI Rank', desc:'Organic, OEM site, and visibility inside AI answer engines.' },
+    DATA:   { label:'Data & Attribution', desc:'Whether you can see what your spend actually produces.' },
+    LOCAL:  { label:'Local & Brand DNA', desc:'GBP, reviews, foot traffic, and how Google reads you.' },
+  };
+
+  const GAP_FIX = {
+    SEARCH: 'A3 maps your real SERP competitors and rebuilds organic + AI-search visibility so traffic doesn\'t vanish when ads pause.',
+    DATA:   'We wire up true attribution (organic vs paid cost-per-lead) so flat spend never means mystery lead drops again.',
+    LOCAL:  'We turn your Brand DNA, GBP, and reviews into a measurable foot-traffic engine, not a profile that just sits there.',
+  };
+
+  const GAP_LABEL = {
+    "Do you know who's actually outranking you on Google in your market right now?":"You can't see who's outranking you",
+    "When your ad spend stays flat but your leads drop, do you know why?":"Lead drops are a mystery",
+    "How are you showing up when shoppers ask ChatGPT, Gemini, or Google's AI Overviews for the best place to buy?":"Invisible in AI search results",
+    "Can your current agency show you exactly what they did last month and what it produced?":"Agency work isn't tied to results",
+    "Do you know your true cost per lead from organic versus paid?":"Cost-per-lead is unclear",
+    "How much of your traffic depends on paid ads that stop the moment you stop spending?":"Over-reliant on paid traffic",
+    "Is your OEM website pulling the organic traffic it should, or leaking it to competitors?":"OEM site is leaking traffic",
+    "When a competitor with less history outranks you locally, do you know what they're doing differently?":"Out-ranked and don't know why",
+    "Are your Google Business Profile and reviews translating into showroom visits, or just sitting there?":"GBP isn't driving visits",
+    "Do you know how Google actually sees your dealership today, your Brand DNA?":"Brand DNA is undefined",
+    "If we showed you three specific gaps holding your visibility back, would that change how you think about your current strategy?":"No active visibility strategy",
+  };
+
+  // Q4 segment theming for the report
+  const SEGMENTS = {
+    BUDGET:     { head:"Let's prove ROI before you spend a dime.", sub:"You flagged budget as your #1 concern, so we lead with return, not invoices. The gaps below are the cheapest wins on the board." },
+    TRUST:      { head:"Let's earn it with proof, not promises.",  sub:"You flagged trust as your #1 concern, fair, after being burned. Every gap below comes with a number you can verify yourself." },
+    COMPLACENT: { head:"Sales are good, let's protect that.",      sub:"You said things feel fine right now. These gaps are exactly how a hungry competitor erodes a comfortable lead before you ever feel it." },
+    LEADS:      { head:"Let's get you more qualified leads.",       sub:"You flagged qualified lead volume as your #1 challenge, these gaps are why the pipeline is thinner than it should be." },
+  };
+
+  /* =========================================================
+     STATE + PERSISTENCE
+     ========================================================= */
+  let state = { answers: new Array(QUESTIONS.length).fill(null), idx: 0, lead: null, completed: false };
+  let viewedQuestions = new Set();
+
+  function save(){ try { localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+  function load(){ try { const r = localStorage.getItem(CONFIG.STORAGE_KEY); if(r) state = Object.assign(state, JSON.parse(r)); } catch(e){} }
+  function clearSaved(){ try { localStorage.removeItem(CONFIG.STORAGE_KEY); } catch(e){} }
+
+  /* =========================================================
+     NAV helpers
+     ========================================================= */
+  function show(id, dir){
+    document.querySelectorAll('.stage').forEach(s=>{ s.classList.remove('active','anim-fade','anim-left','anim-right'); });
+    const el = document.getElementById(id);
+    el.classList.add('active', dir || 'anim-fade');
+    window.scrollTo({ top:0, behavior:'smooth' });
+    // mascot coach shows during quiz + capture only
+    const coach = document.getElementById('coach');
+    coach.classList.toggle('show', id==='quiz' || id==='capture');
+    if(id==='capture') setCoach("That's all 12. Pop your details in and I'll hand you the full report.");
+  }
+
+  // contextual coach lines keyed to progress / pillar
+  const COACH_LINES = {
+    SEARCH: ["This one's about who's beating you on search. No wrong answers, just be straight.",
+             "Search visibility is where most dealers quietly bleed. Where do you really stand?"],
+    DATA:   ["Numbers question. If you're not sure, that's exactly the point worth knowing.",
+             "Can't manage what you can't measure. How clear is your data here?"],
+    LOCAL:  ["Local + reviews drive showroom visits. Be honest about this one.",
+             "This is the foot-traffic stuff. How tight is it really?"],
+    SEGMENT:["Quick gut check, what's actually keeping you up at night?"],
+  };
+  function setCoach(text){ document.getElementById('coachBubble').textContent = text; }
+  function coachForQuestion(i){
+    const Q = QUESTIONS[i];
+    const pool = COACH_LINES[Q.p] || COACH_LINES.SEARCH;
+    if(i === QUESTIONS.length-1){ setCoach("Last one. If three real gaps showed up, would you act on them?"); return; }
+    setCoach(pool[i % pool.length]);
+  }
+  function scrollToActive(){ window.scrollTo({ top:0, behavior:'smooth' }); }
+
+  // hero mascot sound toggle
+  function toggleHeroSound(){
+    const v = document.getElementById('heroVideo'); const btn = document.getElementById('heroSound');
+    v.muted = !v.muted;
+    btn.textContent = v.muted ? '🔇' : '🔊';
+    if(!v.muted){ v.play().catch(()=>{}); track('mascot_unmuted'); }
+  }
+
+  // Saggy speaks once on every results screen, then keeps looping silently
+  function speakSaggy(){
+    const v = document.getElementById('ctaVideo');
+    if(!v) return;
+    try {
+      v.muted = false; v.currentTime = 0;
+      const p = v.play();
+      if(p && p.catch) p.catch(()=>{ v.muted = true; });   // if the browser still blocks, stay silent
+      track('saggy_voice');
+      clearTimeout(v._reMute);
+      v._reMute = setTimeout(()=>{ v.muted = true; }, 8300); // one pass of the 8s voice, then mute the loop
+    } catch(e){ v.muted = true; }
+  }
+
+  function start(){
+    track('quiz_start');
+    // always begin a fresh run at question 1
+    state.answers = new Array(QUESTIONS.length).fill(null);
+    state.idx = 0;
+    state.completed = false;
+    state.realScore = null; state.realData = null;
+    viewedQuestions = new Set();
+    save();
+    show('quiz','anim-left'); render('anim-left');
+  }
+
+  let autoTimer = null;
+  function render(dir){
+    clearTimeout(autoTimer);
+    const Q = QUESTIONS[state.idx];
+    const isSeg = Q.p === 'SEGMENT';
+    document.getElementById('curN').textContent = state.idx+1;
+    const qn = document.getElementById('qnum');
+    qn.textContent = isSeg ? 'Quick context' : ('Question ' + String(state.idx+1).padStart(2,'0'));
+    qn.className = 'qnum' + (isSeg ? ' seg-tag' : '');
+    document.getElementById('qtext').textContent = Q.q;
+    document.getElementById('fill').style.width = (((state.idx+1)/QUESTIONS.length)*100)+'%';
+    document.getElementById('pctTxt').textContent = Math.round(((state.idx+1)/QUESTIONS.length)*100)+'%';
+
+    const wrap = document.getElementById('options');
+    wrap.innerHTML = '';
+    Q.a.forEach((text,i)=>{
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'opt' + (state.answers[state.idx]===i ? ' selected' : '');
+      b.setAttribute('role','radio');
+      b.setAttribute('aria-checked', state.answers[state.idx]===i ? 'true':'false');
+      b.innerHTML = '<span class="dot"></span><span>'+text+'</span><span class="kbd">'+(i+1)+'</span>';
+      b.onclick = ()=> selectOption(i);
+      wrap.appendChild(b);
+    });
+
+    document.getElementById('backBtn').disabled = state.idx===0;
+    const nb = document.getElementById('nextBtn');
+    nb.disabled = state.answers[state.idx]===null;
+    nb.innerHTML = state.idx===QUESTIONS.length-1 ? 'See my report &rarr;' : 'Next &rarr;';
+
+    coachForQuestion(state.idx);
+
+    if (!viewedQuestions.has(state.idx)) { viewedQuestions.add(state.idx); track('question_view', { n: state.idx+1, pillar: Q.p }); }
+  }
+
+  function selectOption(i){
+    const Q = QUESTIONS[state.idx];
+    const firstTime = state.answers[state.idx]===null;
+    state.answers[state.idx] = i;
+    save();
+    document.querySelectorAll('#options .opt').forEach((o,k)=>{
+      o.classList.toggle('selected', k===i);
+      o.setAttribute('aria-checked', k===i ? 'true':'false');
+    });
+    document.getElementById('nextBtn').disabled = false;
+    track('question_answer', { n: state.idx+1, pillar: Q.p, choice: i+1, text: Q.a[i] });
+    // auto-advance forward on a fresh pick
+    if (firstTime) { clearTimeout(autoTimer); autoTimer = setTimeout(()=> next(), 280); }
+  }
+
+  function next(){
+    if (state.answers[state.idx]===null) return;
+    if (state.idx===QUESTIONS.length-1) { goCapture(); return; }
+    state.idx++; save(); render('anim-left');
+  }
+  function prev(){ if (state.idx>0){ state.idx--; save(); render('anim-right'); } }
+
+  /* =========================================================
+     CAPTURE GATE
+     ========================================================= */
+  function computeScore(){
+    if(state.realScore!=null) return state.realScore;   // live data overrides quiz
+    let total=0, n=0;
+    QUESTIONS.forEach((Q,i)=>{ if(Q.p!=='SEGMENT' && state.answers[i]!=null){ total += state.answers[i]+1; n++; } });
+    const max = n*4, min = n*1;
+    return Math.round(((total-min)/(max-min))*100);
+  }
+
+  function goCapture(){
+    document.getElementById('previewScore').textContent = computeScore()+' / 100';
+    track('view_capture', { score: computeScore() });
+    show('capture','anim-left');
+  }
+  function backToQuiz(){ show('quiz','anim-right'); render('anim-right'); }
+
+  document.getElementById('leadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('fName');
+    const dealer = document.getElementById('fDealer');
+    const email = document.getElementById('fEmail');
+    const site = document.getElementById('fSite');
+    const city = document.getElementById('fCity');
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    const realOn = CONFIG.REAL_MODE && CONFIG.PAGESPEED_KEY && CONFIG.GEMINI_KEY;
+    let ok = true;
+    const checks = [[name, !!name.value.trim()], [dealer, !!dealer.value.trim()], [email, emailOk]];
+    if(realOn){ checks.push([site, !!site.value.trim()], [city, !!city.value.trim()]); }
+    checks.forEach(([el,valid])=>{ el.classList.toggle('err', !valid); if(!valid) ok=false; });
+    if(!ok){ return; }
+
+    state.lead = {
+      name: name.value.trim(),
+      dealership: dealer.value.trim(),
+      email: email.value.trim(),
+      website: site.value.trim(),
+      city: city.value.trim(),
+      phone: document.getElementById('fPhone').value.trim(),
+    };
+    save();
+    submitLead();
+    track('lead_capture', { dealership: state.lead.dealership });
+    runAnalysis();
+  });
+
+  // Decide live vs quiz scoring, then render
+  async function runAnalysis(){
+    const canReal = CONFIG.REAL_MODE && CONFIG.PAGESPEED_KEY && CONFIG.GEMINI_KEY && state.lead && state.lead.website;
+    if(!canReal){ state.realScore=null; state.realData=null; finish(); return; }
+    showAnalyzing();
+    try {
+      const data = await realAnalyze({ url: normalizeUrl(state.lead.website), brand: state.lead.dealership, city: state.lead.city });
+      state.realScore = data.overall; state.realData = data;
+      track('real_analysis', { score: data.overall });
+    } catch(err){
+      state.realScore=null; state.realData=null;
+      track('real_analysis_error', { msg: String(err && err.message || err) });
+      toast('Live lookup unavailable, scoring from your answers');
+    }
+    finish();
+  }
+
+  /* =========================================================
+     REAL DATA, PageSpeed (site health) + Gemini (AI/search visibility)
+     ========================================================= */
+  function normalizeUrl(u){ u=(u||'').trim(); if(!u) return ''; if(!/^https?:\/\//i.test(u)) u='https://'+u; return u; }
+  function clampScore(v){ v=Number(v); return isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):null; }
+
+  async function pagespeed(url){
+    if(!CONFIG.PAGESPEED_KEY || !url) return null;
+    const cats=['PERFORMANCE','SEO','BEST_PRACTICES','ACCESSIBILITY'];
+    const q='https://www.googleapis.com/pagespeedonline/v5/runPagespeed?strategy=MOBILE&key='+encodeURIComponent(CONFIG.PAGESPEED_KEY)+'&url='+encodeURIComponent(url)+cats.map(c=>'&category='+c).join('');
+    const r=await fetch(q); if(!r.ok) throw new Error('pagespeed '+r.status);
+    const j=await r.json();
+    const c=(j.lighthouseResult&&j.lighthouseResult.categories)||{};
+    const g=k=>(c[k]&&c[k].score!=null)?Math.round(c[k].score*100):null;
+    return { perf:g('performance'), seo:g('seo'), bp:g('best-practices'), a11y:g('accessibility') };
+  }
+
+  async function geminiVisibility({brand, city, url}){
+    if(!CONFIG.GEMINI_KEY) return null;
+    const model=CONFIG.GEMINI_MODEL||'gemini-2.0-flash';
+    const endpoint='https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+encodeURIComponent(CONFIG.GEMINI_KEY);
+    const prompt=
+`You are auditing the live online visibility of a car dealership for a marketing report. Use web search.
+Dealership: ${brand||'(unknown)'}
+City / market: ${city||'(unknown)'}
+Website: ${url||'(unknown)'}
+Assess, based on what you actually find online right now:
+- whether this dealership shows up and is recommended when local shoppers search (and when they ask AI) for the best place to buy
+- the strength of its Google Business Profile, ratings and reviews
+- its overall local brand presence
+Return ONLY strict minified JSON, no markdown:
+{"score":<int 0-100 overall visibility>,"ai_score":<int 0-100 presence in AI/search recommendations>,"local_score":<int 0-100 reviews/local presence>,"foundInAI":<true|false>,"summary":"<one concise sentence a dealer principal would understand>"}`;
+    const mk=(useTools)=>{
+      const body={ contents:[{ parts:[{text:prompt}] }], generationConfig:{ temperature:0.2 } };
+      if(useTools) body.tools=[{ google_search:{} }];
+      return fetch(endpoint,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    };
+    let r=await mk(true);
+    if(!r.ok){ r=await mk(false); if(!r.ok) throw new Error('gemini '+r.status); }
+    const j=await r.json();
+    let txt=''; try{ txt=j.candidates[0].content.parts.map(p=>p.text||'').join(''); }catch(e){}
+    const m=txt.match(/\{[\s\S]*\}/); let o={}; if(m){ try{ o=JSON.parse(m[0]); }catch(e){} }
+    return { score:clampScore(o.score), ai_score:clampScore(o.ai_score), local_score:clampScore(o.local_score), foundInAI:!!o.foundInAI, summary:o.summary||'' };
+  }
+
+  async function realAnalyze({url, brand, city}){
+    const [ps, ai] = await Promise.all([ pagespeed(url).catch(()=>null), geminiVisibility({brand,city,url}).catch(()=>null) ]);
+    const sh=[ps&&ps.perf, ps&&ps.seo, ps&&ps.bp, ps&&ps.a11y].filter(x=>x!=null);
+    const siteHealth = sh.length ? Math.round(sh.reduce((a,b)=>a+b,0)/sh.length) : null;
+    const vis = (ai&&ai.score!=null) ? ai.score : null;
+    let overall;
+    if(siteHealth!=null && vis!=null) overall = Math.round(0.4*siteHealth + 0.6*vis);
+    else overall = (siteHealth!=null) ? siteHealth : vis;
+    if(overall==null) throw new Error('no live data returned');
+    return { overall, siteHealth, ps, ai };
+  }
+
+  const AN_STEPS = ['Scanning your website','Checking Google PageSpeed & Core Web Vitals','Asking AI engines if shoppers find you','Scoring your real visibility'];
+  function showAnalyzing(){
+    show('analyzing','anim-left');
+    const wrap=document.getElementById('anSteps'); wrap.innerHTML='';
+    AN_STEPS.forEach((s,i)=>{
+      const el=document.createElement('div'); el.className='an-step'+(i===0?' active':'');
+      el.innerHTML='<span class="dot">'+(i===0?'<span class="spin"></span>':'')+'</span><span>'+s+'</span>';
+      wrap.appendChild(el);
+    });
+    let i=0;
+    clearInterval(showAnalyzing._t);
+    showAnalyzing._t=setInterval(()=>{
+      const steps=document.querySelectorAll('#anSteps .an-step');
+      if(i<steps.length){ steps[i].className='an-step done'; steps[i].querySelector('.dot').textContent='✓'; }
+      i++;
+      if(i<steps.length){ steps[i].className='an-step active'; steps[i].querySelector('.dot').innerHTML='<span class="spin"></span>'; }
+      else clearInterval(showAnalyzing._t);
+    }, 1600);
+  }
+
+  // POST to webhook (fire-and-forget, graceful if no endpoint)
+  function submitLead(){
+    const data = {
+      lead: state.lead,
+      score: computeScore(),
+      answers: QUESTIONS.map((Q,i)=>({ q:Q.q, pillar:Q.p, choice: state.answers[i]!=null ? state.answers[i]+1 : null, text: state.answers[i]!=null ? Q.a[state.answers[i]] : null })),
+      segment: getSegment(),
+      source: 'visibility-analyzer',
+    };
+    if(!CONFIG.WEBHOOK_URL){ track('lead_webhook_skipped'); return; }
+    try {
+      const body = JSON.stringify(data);
+      if(navigator.sendBeacon){ navigator.sendBeacon(CONFIG.WEBHOOK_URL, new Blob([body],{type:'application/json'})); }
+      else { fetch(CONFIG.WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body, keepalive:true }); }
+      track('lead_webhook_sent');
+    } catch(e){ track('lead_webhook_error'); }
+  }
+
+  function getSegment(){
+    const segQ = QUESTIONS.findIndex(q=>q.p==='SEGMENT');
+    const a = state.answers[segQ];
+    return (segQ>-1 && a!=null) ? QUESTIONS[segQ].seg[a] : null;
+  }
+
+  /* =========================================================
+     RESULTS
+     ========================================================= */
+  // severity → color + label (diagnostic clarity: low reads red, not brand-green)
+  function tone(p){
+    if(p<33) return {c:'#EF4444', bg:'rgba(239,68,68,0.14)', label:'Critical'};
+    if(p<56) return {c:'#F59E0B', bg:'rgba(245,158,11,0.14)', label:'At risk'};
+    if(p<76) return {c:'#34C759', bg:'rgba(52,199,89,0.14)',  label:'Solid'};
+    return        {c:'#1DB954', bg:'rgba(29,185,84,0.16)',   label:'Strong'};
+  }
+  const PILLAR_ICON = { SEARCH:'🔍', DATA:'📊', LOCAL:'📍' };
+
+  function finish(){
+    state.completed = true; save();
+    clearInterval(showAnalyzing._t);
+    const pct = computeScore();
+    const seg = getSegment();
+    const tn = tone(pct);
+
+    // pillar scores
+    const pill = { SEARCH:{s:0,n:0}, DATA:{s:0,n:0}, LOCAL:{s:0,n:0} };
+    QUESTIONS.forEach((Q,i)=>{ if(pill[Q.p] && state.answers[i]!=null){ pill[Q.p].s += state.answers[i]+1; pill[Q.p].n++; } });
+
+    show('results','anim-left');
+    track('view_results', { score: pct, segment: seg });
+    speakSaggy();   // Saggy's voice auto-plays on every analysis (fired from the submit gesture)
+
+    // ring + count, severity-colored so an 18 reads RED, not success-green
+    const C = 2*Math.PI*86;
+    const ring = document.getElementById('ring');
+    ring.setAttribute('stroke-dasharray', C);
+    ring.setAttribute('stroke', tn.c);
+    ring.style.filter = 'drop-shadow(0 0 16px '+tn.c+'88)';
+    setTimeout(()=>{ ring.style.strokeDashoffset = C*(1-pct/100); }, 120);
+    const numEl = document.getElementById('scoreNum'); numEl.style.color = tn.c;
+    animateEl(numEl, pct, 1100);
+
+    // ambient severity glow behind the score
+    const glow = document.getElementById('scoreGlow');
+    if(glow) glow.style.background = 'radial-gradient(circle, '+tn.c+' 0%, transparent 70%)';
+
+    // report header (real deliverable feel)
+    const rep = document.getElementById('repHead');
+    if(rep){
+      let dateStr=''; try { dateStr = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); } catch(e){}
+      const dealer = state.lead && state.lead.dealership ? state.lead.dealership : 'Your dealership';
+      rep.innerHTML = 'Visibility Report &nbsp;·&nbsp; <b>'+dealer+'</b>' + (dateStr?(' &nbsp;·&nbsp; '+dateStr):'');
+    }
+
+    // tier
+    let tier;
+    if(pct<33) tier = {b:'High Risk · Tier 1', t:'You\'re flying blind, and losing ground.', d:'Right now competitors can see more about your market than you can. The good news: this is the highest-upside position to be in. Almost all of it is fixable, and fast.'};
+    else if(pct<66) tier = {b:'Exposed · Tier 2', t:'You\'re partly covered, but leaking visibility.', d:'You have instincts and some data, but the picture is incomplete, which is exactly where rivals with less history slip past you. Closing that gap compounds quickly.'};
+    else if(pct<85) tier = {b:'Competitive · Tier 3', t:'Strong foundation. A few gaps cost you the top spot.', d:'You\'re ahead of most dealers in your market. The difference between you and #1 is now precision, and that last stretch is what locks in the lead.'};
+    else tier = {b:'Market Leader · Tier 4', t:'You\'re dominating, now defend the position.', d:'You know your numbers, your Brand DNA, and your competition. The work now is protecting your moat as AI search reshuffles the rankings. Let\'s pressure-test it.'};
+
+    const greet = state.lead && state.lead.name ? state.lead.name.split(' ')[0].replace(/^./,c=>c.toUpperCase())+', ' : '';
+    const tb = document.getElementById('tierBadge');
+    tb.textContent = tier.b; tb.style.background = tn.c; tb.style.color = '#fff'; tb.style.boxShadow = '0 4px 24px '+tn.c+'55';
+    document.getElementById('tierTitle').textContent = greet + tier.t.charAt(0).toLowerCase() + tier.t.slice(1);
+    const liveSummary = state.realData && state.realData.ai && state.realData.ai.summary ? state.realData.ai.summary : '';
+    document.getElementById('tierDesc').textContent = liveSummary ? (liveSummary + ' ' + tier.d) : tier.d;
+
+    // benchmark
+    const avg = CONFIG.BENCHMARK;
+    document.getElementById('bmAvgTxt').textContent = avg;
+    document.getElementById('bmAvg').style.left = avg+'%';
+    const youM = document.getElementById('bmYou'); youM.style.background = tn.c; youM.style.boxShadow = '0 0 12px '+tn.c;
+    setTimeout(()=>{ youM.style.left = pct+'%'; }, 200);
+    const delta = pct - avg;
+    let dColor = '#8A919C';
+    if(delta >= 8) dColor = '#1DB954';
+    else if(delta <= -25) dColor = '#EF4444';
+    else if(delta <= -8) dColor = '#F59E0B';
+    const bb = (txt)=> '<b style="color:'+dColor+'">'+txt+'</b>';
+    let bmMsg;
+    if(delta >= 8) bmMsg = `You're ${bb(delta+' points above')} the average dealer in your segment. You're ahead, and that lead is yours to protect.`;
+    else if(delta <= -8) bmMsg = `You're ${bb(Math.abs(delta)+' points below')} the average dealer in your segment. That gap is visible to shoppers every day, and closeable.`;
+    else bmMsg = `You're right around the segment average of ${bb(avg)}. "Average" is exactly where competitors with momentum overtake you.`;
+    document.getElementById('bmNote').innerHTML = bmMsg;
+
+    // opportunity projection tiles, real sub-scores when we have live data
+    const upside = 100 - pct;
+    const behind = Math.max(0, avg - pct);
+    const rd = state.realData;
+    document.getElementById('projEyebrow').textContent = rd ? 'What we found in your live data' : 'The opportunity on the table';
+    const pj = document.getElementById('proj'); pj.innerHTML = '';
+    let tiles;
+    if(rd){
+      const aiScore = rd.ai ? (rd.ai.ai_score!=null ? rd.ai.ai_score : rd.ai.score) : null;
+      tiles = [
+        rd.siteHealth!=null ? { n: rd.siteHealth, cap: 'Live website health (Google PageSpeed)' }
+                            : { s:'—', cap:'Website health unavailable' },
+        aiScore!=null ? { n: aiScore, cap: 'Visibility in AI & search recommendations' }
+                      : { n: upside, cap: 'Points of visibility upside on the table' },
+        { s: (rd.ai && rd.ai.foundInAI) ? '✓' : '✗', cap: 'Cited when shoppers ask AI for the best dealer' },
+      ];
+    } else {
+      tiles = [
+        { n: upside, cap: 'Points of visibility upside still on the table' },
+        behind>0 ? { n: behind, cap: 'Points behind your market average today' }
+                 : { s: '✓', cap: 'You\'re at or above your market average' },
+        { s: '90<small style="font-size:18px">d</small>', cap: 'Typical A3 timeline to close your biggest gaps' },
+      ];
+    }
+    tiles.forEach(t=>{
+      const el = document.createElement('div'); el.className = 'tile';
+      el.innerHTML = '<div class="big">'+(('n' in t)?'0':t.s)+'</div><div class="cap">'+t.cap+'</div>';
+      pj.appendChild(el);
+      if('n' in t) animateEl(el.querySelector('.big'), t.n, 1100);
+    });
+
+    // segment theming
+    if(seg && SEGMENTS[seg]){
+      document.getElementById('ctaHead').textContent = SEGMENTS[seg].head;
+    }
+
+    // weakest pillar → CTA urgency
+    let weakest=null, wv=999;
+    Object.keys(pill).forEach(k=>{ if(pill[k].n){ const v=pill[k].s/(pill[k].n*4); if(v<wv){wv=v; weakest=k;} } });
+    if(weakest){
+      document.getElementById('urgency').innerHTML = '●&nbsp; Start here: <b>'+PILLAR_META[weakest].label+'</b>';
+    }
+
+    setupReveal();
+  }
+
+  // reveal report sections as they scroll into view
+  let _revObs = null;
+  function setupReveal(){
+    const els = document.querySelectorAll('#results .reveal');
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce || !('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('inview')); return; }
+    if(_revObs) _revObs.disconnect();
+    _revObs = new IntersectionObserver((ents)=>{
+      ents.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('inview'); _revObs.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    els.forEach(e=>{ e.classList.remove('inview'); _revObs.observe(e); });
+  }
+
+  /* =========================================================
+     ACTIONS
+     ========================================================= */
+  function bookCall(){
+    track('book_call', { score: computeScore() });
+    const seg = getSegment();
+    const params = new URLSearchParams();
+    if(state.lead){ params.set('name', state.lead.name); params.set('email', state.lead.email); }
+    params.set('a1', 'Visibility Score: '+computeScore()+'/100'+(seg?(' · Focus: '+seg):''));
+    const url = CONFIG.CALENDLY_URL + (CONFIG.CALENDLY_URL.includes('?')?'&':'?') + params.toString();
+    window.open(url, '_blank', 'noopener');
+  }
+
+  function printReport(){ track('print_report'); window.print(); }
+
+  function restart(){
+    track('retake');
+    clearSaved();
+    state = { answers: new Array(QUESTIONS.length).fill(null), idx:0, lead:null, completed:false };
+    viewedQuestions = new Set();
+    document.getElementById('ring').style.strokeDashoffset = 540;
+    document.getElementById('leadForm').reset();
+    document.querySelectorAll('#leadForm input').forEach(i=>i.classList.remove('err'));
+    show('intro','anim-fade');
+  }
+
+  function toast(msg){
+    const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=msg;
+    t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2600);
+  }
+
+  function animateCount(id, to, dur){ animateEl(document.getElementById(id), to, dur); }
+  function animateEl(el, to, dur){
+    if(!el) return;
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){ el.textContent = to; return; }
+    const start = performance.now();
+    (function step(t){ const p=Math.min(1,(t-start)/dur); el.textContent=Math.round(p*to); if(p<1) requestAnimationFrame(step); })(start);
+  }
+
+  /* =========================================================
+     KEYBOARD
+     ========================================================= */
+  document.addEventListener('keydown', e=>{
+    if(!document.getElementById('quiz').classList.contains('active')) return;
+    if(['1','2','3','4'].includes(e.key)){
+      const opts = document.querySelectorAll('#options .opt'); const i=+e.key-1;
+      if(opts[i]) opts[i].click();
+    } else if(e.key==='Enter' && !document.getElementById('nextBtn').disabled){ next(); }
+    else if(e.key==='Backspace'){ e.preventDefault(); prev(); }
+  });
+
+  /* =========================================================
+     ABANDON TRACKING
+     ========================================================= */
+  window.addEventListener('beforeunload', ()=>{
+    if(!state.completed && state.answers.some(a=>a!==null)){
+      const answered = state.answers.filter(a=>a!==null).length;
+      track('quiz_abandon', { answered, of: QUESTIONS.length });
+    }
+  });
+
+  /* =========================================================
+     INIT, animate hero stats. Every load starts fresh at question 1.
+     ========================================================= */
+  clearSaved();
+  (function heroStats(){
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('.stat [data-count]').forEach(el=>{
+      const to=+el.getAttribute('data-count');
+      if(reduce){ el.textContent=to; return; }
+      const start=performance.now();
+      (function step(t){ const p=Math.min(1,(t-start)/700); el.textContent=Math.round(p*to); if(p<1) requestAnimationFrame(step); })(start);
+    });
+  })();
+</script>
+</body>
+</html>
