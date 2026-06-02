@@ -57,9 +57,36 @@ export function tierFor(pct: number): Tier {
   };
 }
 
+/** Space band for the score reveal — how far the rocket travelled toward the moon */
+export function bandFor(pct: number): { name: string; blurb: string } {
+  if (pct < 33) return { name: "Grounded", blurb: "Still on the launch pad" };
+  if (pct < 66) return { name: "Liftoff", blurb: "Engines lit, climbing fast" };
+  if (pct < 85) return { name: "In Orbit", blurb: "Up and circling the market" };
+  return { name: "Lunar Leader", blurb: "Touched down on the moon" };
+}
+
 export const BENCHMARK = Number(process.env.NEXT_PUBLIC_BENCHMARK ?? 58) || 58;
 export const CALENDLY_URL =
-  process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/a3brands/strategy-call";
+  process.env.NEXT_PUBLIC_CALENDLY_URL || "https://a3brands.com/book-a-call/";
+
+/**
+ * Ranged estimate of monthly buyer searches landing on a competitor, derived from real
+ * local search volume and the visibility gap. Returns null when the scan has no volume to
+ * stand on (never invent). The bigger the gap below 100, the larger the share that's missed.
+ */
+export function lostBuyersRange(pct: number, volume: number | null | undefined): { lo: number; hi: number } | null {
+  if (!volume || volume < 5) return null;
+  const share = Math.min(0.9, Math.max(0.05, (100 - pct) / 100));
+  const mid = volume * share;
+  if (mid < 2) return null;
+  const step = mid >= 40 ? 5 : 1;
+  const round = (n: number) => Math.max(step, Math.round(n / step) * step);
+  let lo = round(mid * 0.8);
+  let hi = round(mid * 1.25);
+  if (hi <= lo) hi = lo + step;
+  return { lo, hi };
+}
+
 
 /** Abramowitz-Stegun erf approximation */
 function erf(x: number): number {

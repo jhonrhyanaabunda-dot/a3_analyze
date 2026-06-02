@@ -24,6 +24,18 @@ export interface OnPageAudit {
   finalUrl: string;
 }
 
+export interface Competitor {
+  /** the real competing dealership rooftop ranking above this dealer */
+  name: string;
+  /** the actual search term it outranks them for */
+  term: string;
+}
+
+export interface Finding {
+  severity: "good" | "warn" | "bad";
+  text: string;
+}
+
 export interface AiVisibility {
   score: number | null;
   ai_score: number | null;
@@ -32,6 +44,14 @@ export interface AiVisibility {
   market_average: number | null;
   foundInAI: boolean;
   summary: string;
+  /** real evidence (grounded) */
+  rating: number | null;
+  review_count: number | null;
+  gbp: string | null;
+  /** estimated monthly local search volume for the dealer's core buying terms (null if unknown) */
+  local_search_volume: number | null;
+  competitors: Competitor[];
+  findings: Finding[];
 }
 
 export interface RealData {

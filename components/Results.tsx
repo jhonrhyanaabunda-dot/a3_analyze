@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lead, RealData } from "@/lib/types";
 import { QUESTIONS, PILLAR_META, SEGMENTS } from "@/lib/questions";
-import { BENCHMARK, CALENDLY_URL, computeQuizScore, getSegment, percentile, tierFor, tone } from "@/lib/scoring";
+import { bandFor, BENCHMARK, CALENDLY_URL, computeQuizScore, getSegment, lostBuyersRange, percentile, tierFor, tone } from "@/lib/scoring";
 import { downloadReportPdf } from "@/lib/pdf";
 import CountUp from "./CountUp";
 import Mascot from "./Mascot";
@@ -16,15 +16,20 @@ export default function Results({
   lead,
   real,
   onRetake,
+  onViewEvidence,
 }: {
   answers: (number | null)[];
   lead: Lead | null;
   real: RealData | null;
   onRetake: () => void;
+  onViewEvidence?: () => void;
 }) {
   const pct = real ? real.overall : computeQuizScore(answers);
   const tn = tone(pct);
   const tier = tierFor(pct);
+  const band = bandFor(pct);
+  // how far the rocket travelled toward the moon (kept just shy of the moon at 100)
+  const journeyPos = 6 + (pct / 100) * 82;
   const seg = getSegment(answers);
   // real, market-specific average from Gemini when available; else the configured fallback
   const avg = real?.ai?.market_average ?? BENCHMARK;
@@ -33,6 +38,7 @@ export default function Results({
   const ctaVid = useRef<HTMLVideoElement>(null);
   const [offset, setOffset] = useState(RING_C);
   const [youLeft, setYouLeft] = useState(0);
+  const [climb, setClimb] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const rv = (base: string, order: number) => ({
     className: `${base} reveal${revealed ? " inview" : ""}`,
@@ -70,9 +76,11 @@ export default function Results({
   useEffect(() => {
     const t1 = setTimeout(() => setOffset(RING_C * (1 - pct / 100)), 120);
     const t2 = setTimeout(() => setYouLeft(pct), 220);
+    const t3 = setTimeout(() => setClimb(true), 320);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
     };
   }, [pct]);
 
@@ -166,6 +174,28 @@ export default function Results({
   const dealerName = lead?.dealership || "Your dealership";
   const cityName = lead?.city || "your market";
 
+  // live Google rating + reviews (only shown when the live lookup returned them)
+  const rating = real?.ai?.rating ?? null;
+  const reviewCount = real?.ai?.review_count ?? null;
+  const showReviews = rating != null;
+  const fullStars = rating != null ? Math.max(0, Math.min(5, Math.round(rating))) : 0;
+
+  // real competitors from the live scan (never invented; empty when the scan found none)
+  const rivals = (real?.ai?.competitors ?? []).filter((c) => c && c.name).slice(0, 2);
+  const primaryRival = rivals[0] || null;
+
+  // AI-pain hero headline — names a real competitor ONLY when the scan returned one
+  const heroTitle = primaryRival
+    ? `AI is sending your buyers to ${primaryRival.name}.`
+    : real && !found
+    ? "AI isn't sending buyers to your store."
+    : "Shoppers ask AI first now. Is it pointing them to you?";
+
+  // lost leads — ranged, from the scan's REAL search demand only (never invented; in leads, not $)
+  const lostLeads = lostBuyersRange(pct, real?.ai?.local_search_volume);
+  // proof is only honest when the live scan actually found a rival above you or your absence
+  const showProof = !!real && (!!primaryRival || !found);
+
   const makePdf = () => {
     downloadReportPdf({
       score: pct,
@@ -194,12 +224,77 @@ export default function Results({
 
   return (
     <section className="stage anim-left" id="results" ref={sectionRef}>
+      {/* report header + the AI-pain hero (lead with the pain) */}
       <div className="result-head">
         <div className="score-glow" style={{ background: `radial-gradient(circle, ${tn.c} 0%, transparent 70%)` }} />
         <div className="rep-head">
           Visibility Report &nbsp;·&nbsp; <b>{lead?.dealership || "Your dealership"}</b>
           {dateStr ? <> &nbsp;·&nbsp; {dateStr}</> : null}
         </div>
+        <div className="ai-hero">
+          <div className="ai-hero-eyebrow">●&nbsp; The real cost of your visibility gap</div>
+          <h2 className="ai-hero-title">{heroTitle}</h2>
+          <p className="ai-hero-body">
+            {primaryRival ? (
+              <>
+                Right now, when a shopper asks AI or Google for the best dealer in {cityName},{" "}
+                <b>{primaryRival.name}</b> comes up
+                {primaryRival.term ? <> for &ldquo;{primaryRival.term}&rdquo;</> : null}, not {dealerName}. Those
+                are buyers who never call you and never reach your lot.
+              </>
+            ) : real && !found ? (
+              <>
+                When shoppers ask AI or Google for the best dealer in {cityName}, your store isn&apos;t in the
+                answer. Every one of those is a lead landing with a competitor instead of in your CRM.
+              </>
+            ) : (
+              <>
+                When a buyer asks AI for the best dealer in {cityName}, it names a store. Every answer that
+                doesn&apos;t name {dealerName} is a ready-to-buy buyer routed to a competitor.
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+
+      {/* the proof — the real AI answer for their market, and the leads it routes away */}
+      {showProof && (
+        <div {...rv("proof-panel", 0)}>
+          <div className="proof-card">
+            <div className="proof-eyebrow">●&nbsp; The proof</div>
+            <div className="proof-head">We asked AI for the best dealer in {cityName}. Here&apos;s the answer:</div>
+            <div className="proof-bubble">
+              <div className="proof-ai">
+                <span className="dot">AI</span>
+                <div className="proof-a">
+                  {primaryRival ? (
+                    <>
+                      It points shoppers to <b>{primaryRival.name}</b>
+                      {rivals[1] ? <> and <b>{rivals[1].name}</b></> : null}
+                      {primaryRival.term ? <> for &ldquo;{primaryRival.term}&rdquo;</> : null}.
+                    </>
+                  ) : (
+                    <>It points shoppers to several nearby dealers.</>
+                  )}
+                </div>
+              </div>
+              <div className="proof-verdict">✗ {dealerName} isn&apos;t in the answer.</div>
+            </div>
+            {lostLeads && (
+              <p className="proof-leads">
+                That answer reaches an estimated <b>{lostLeads.lo} to {lostLeads.hi}</b> buyers a month searching
+                your market, and right now they&apos;re pointed to {primaryRival ? primaryRival.name : "a competitor"},
+                not you.
+              </p>
+            )}
+            <div className="proof-note">Based on live search results and demand for your market.</div>
+          </div>
+        </div>
+      )}
+
+      {/* the score behind it (supporting proof) */}
+      <div className="result-head">
+        <div className="eyebrow">The visibility score behind it</div>
         <div className="score-ring">
           <svg width="200" height="200">
             <circle cx="100" cy="100" r={RING_R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="14" />
@@ -224,9 +319,27 @@ export default function Results({
             <div className="den">Visibility Score</div>
           </div>
         </div>
+        <div className="journey" aria-label={`Your rocket reached ${band.name}`}>
+          <div className="journey-rail">
+            <div className="rr-moon" />
+            <div className="rr-line" />
+            <div className="rr-trail" style={{ height: `${climb ? journeyPos : 6}%` }} />
+            <div className="rr-rocket" style={{ bottom: `${climb ? journeyPos : 6}%` }} aria-hidden="true">
+              🚀
+            </div>
+            <div className="rr-ground" />
+          </div>
+          <ul className="journey-bands">
+            {["Lunar Leader", "In Orbit", "Liftoff", "Grounded"].map((name) => (
+              <li key={name} className={name === band.name ? "active" : ""}>
+                {name}
+              </li>
+            ))}
+          </ul>
+        </div>
         <div>
           <span className="tier-badge" style={{ background: tn.c, color: "#fff", boxShadow: `0 4px 24px ${tn.c}55` }}>
-            {tier.b}
+            {band.name} &nbsp;·&nbsp; {band.blurb}
           </span>
         </div>
         <h2>{greet + tier.t.charAt(0).toLowerCase() + tier.t.slice(1)}</h2>
@@ -237,7 +350,7 @@ export default function Results({
         </div>
       </div>
 
-      <div {...rv("benchmark", 0)}>
+      <div {...rv("benchmark", 1)}>
         <div className="bm-row">
           <span>0</span>
           <span>
@@ -252,30 +365,48 @@ export default function Results({
         <div className="bm-note">{bmNote}</div>
       </div>
 
-      {real && (
-        <div {...rv("serp-mock", 1)}>
+      {real && found && !primaryRival && (
+        <div {...rv("serp-mock", 2)}>
           <div className="sm-head">When a shopper asks AI for the best dealer in {cityName}…</div>
           <div className="sm-bubble">
             <div className="sm-q">💬 &ldquo;Best place to buy a car near {cityName}?&rdquo;</div>
             <div className="sm-ai">
               <span className="dot">AI</span>
               <div className="sm-a">
-                {found ? (
-                  <>Top recommendations include <b>{dealerName}</b>, noted for its reviews and local presence.</>
-                ) : (
-                  <>Top recommendations point shoppers to several nearby dealers. <b>{dealerName}</b> isn&apos;t currently surfaced in the answer.</>
-                )}
+                Top recommendations include <b>{dealerName}</b>, noted for its reviews and local presence.
               </div>
             </div>
-            <div className={`sm-verdict ${found ? "good" : "bad"}`}>
-              {found ? "✓ You're being recommended" : "✗ You're not in the conversation"}
+            <div className="sm-verdict good">✓ You&apos;re being recommended</div>
+          </div>
+        </div>
+      )}
+
+      {showReviews && (
+        <div {...rv("reviews", 3)}>
+          <div className="rv-card">
+            <div className="rv-stars" aria-label={`${rating} out of 5 stars`}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <span key={i} className={i < fullStars ? "on" : "off"}>
+                  ★
+                </span>
+              ))}
+            </div>
+            <div className="rv-meta">
+              <span className="rv-num">{rating!.toFixed(1)}</span>
+              {reviewCount != null && (
+                <span className="rv-count">from {reviewCount.toLocaleString()} Google reviews</span>
+              )}
+            </div>
+            <div className="rv-note">
+              Shoppers compare reviews before they ever call. This is the first impression {dealerName} makes
+              in the search results.
             </div>
           </div>
         </div>
       )}
 
-      <div {...rv("eyebrow", 2)}>{real ? "What we found in your live data" : "The opportunity on the table"}</div>
-      <div {...rv("proj", 3)}>
+      <div {...rv("eyebrow", 4)}>{real ? "What we found in your live data" : "The opportunity on the table"}</div>
+      <div {...rv("proj", 5)}>
         {tiles.map((t, i) => (
           <div className="tile" key={i}>
             <div className="big">{t.node}</div>
@@ -284,7 +415,7 @@ export default function Results({
         ))}
       </div>
 
-      <div {...rv("cta-band", 4)}>
+      <div {...rv("cta-band", 6)}>
         <div className="cta-text">
           <span className="urgency">
             ●&nbsp; {weakest ? <>Start here: <b>{PILLAR_META[weakest].label}</b></> : "Your biggest opportunity right now"}
@@ -298,8 +429,8 @@ export default function Results({
             <button className="btn btn-primary" onClick={bookCall}>
               BOOK A STRATEGY CALL
             </button>
-            <button className="btn btn-ghost" onClick={makePdf}>
-              ⤓ Download PDF report
+            <button className="btn btn-ghost" onClick={onViewEvidence ?? makePdf}>
+              🔍 View real evidence →
             </button>
             <button className="btn btn-ghost" onClick={onRetake}>
               Retake

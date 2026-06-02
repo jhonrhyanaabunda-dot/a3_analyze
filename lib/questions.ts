@@ -1,130 +1,129 @@
 import type { Pillar, Question } from "./types";
 
 /**
- * Each option scores 1 (worst) -> 4 (best).
- * Q4 (p: "SEGMENT") is non-ordinal and NOT scored — it themes the report.
- * Pillars: SEARCH (rank/AI/OEM), DATA (measurement), LOCAL (GBP/Brand DNA)
+ * Each option scores 1 (worst, in denial) -> 4 (best, aware and ready to act).
+ * All 12 questions are scored. Pillars: SEARCH (rank/AI/OEM), DATA (measurement),
+ * LOCAL (GBP/reviews/Brand DNA) — 4 questions each, for the weakest-pillar nudge.
  */
 export const QUESTIONS: Question[] = [
   {
     p: "SEARCH",
-    q: "Do you know who's actually outranking you on Google in your market right now?",
+    q: "Right now, buyers in your area are calling a competitor that shows up before you. How many of those sales are you losing every month?",
     a: [
-      "I don't really worry about Google rankings",
-      "That's the OEM's job, not mine",
-      "I doubt SEO moves the needle for car sales",
-      "No, but I'd want to know exactly who's ahead of me",
+      "None that I know of, I figure I get my share",
+      "Probably some, but I've never put a number on it",
+      "Enough that it bugs me, I just can't prove how many",
+      "No idea, and that blind spot could be costing me real deals",
     ],
   },
   {
     p: "DATA",
-    q: "When your ad spend stays flat but your leads drop, do you know why?",
+    q: "Your marketing spend hasn't dropped, but your leads have. That's buyers you paid for and never got. Do you know where they went?",
     a: [
-      "It happens, but cutting back on marketing isn't an option I can question",
-      "I just assume it's the market and ride it out",
-      "I've been told before it's fixed and it wasn't",
-      "No, and figuring that out would be worth a real conversation",
+      "My leads are fine, I'm not losing any",
+      "Maybe a few slip, but nothing serious",
+      "I've lost leads before and never found out why",
+      "No, and paying for buyers I never receive is a problem",
     ],
   },
   {
     p: "SEARCH",
-    q: "How are you showing up when shoppers ask ChatGPT, Gemini, or Google's AI Overviews for the best place to buy?",
+    q: "When AI recommends a dealer and it isn't you, that buyer drives to your competitor's lot. Do you know how many sales AI is quietly handing away?",
     a: [
-      "Nobody's actually buying cars off ChatGPT",
-      "My customers don't search like that",
-      "Maybe later, that feels like a next-year problem",
-      "I don't know, and that gap concerns me",
-    ],
-  },
-  {
-    p: "SEGMENT",
-    q: "What's the biggest challenge you're dealing with on the digital side right now?",
-    a: [
-      "Honestly, budget, I can't add another spend line",
-      "Trusting that any agency will actually deliver",
-      "We're fine, sales are good right now",
-      "Not enough qualified leads, and I want that solved",
-    ],
-    seg: ["BUDGET", "TRUST", "COMPLACENT", "LEADS"],
-  },
-  {
-    p: "DATA",
-    q: "Can your current agency show you exactly what they did last month and what it produced?",
-    a: [
-      "I pay a provider and assume it's handled",
-      "No, and I've been burned by that before",
-      "I get a report but can't tell what it's worth",
-      "No, and that lack of proof bothers me",
+      "Zero, my buyers don't use AI",
+      "Maybe a handful, but it can't be many",
+      "It could be happening and I'd never see it",
+      "No, and losing sales I can't even track scares me",
     ],
   },
   {
     p: "DATA",
-    q: "Do you know your true cost per lead from organic versus paid?",
+    q: "Be honest: what's the real reason your store isn't closing more deals from online shoppers?",
     a: [
-      "I'd need to see ROI before spending anything new",
-      "I get plenty of leads from Cars.com and Autotrader anyway",
-      "I've heard the cheaper-leads pitch before",
-      "No, and knowing that number would change how I budget",
+      "We're closing plenty, no deals are slipping",
+      "A few get away but that's just the business",
+      "I lose deals online and can't pinpoint why",
+      "I'm leaving real money on the table and want it fixed",
+    ],
+  },
+  {
+    p: "DATA",
+    q: "You pay your agency every month. Can they prove a single sale or lead came from it, or are you funding work that never reached your bottom line?",
+    a: [
+      "I assume the sales are there somewhere",
+      "They show me activity, but not actual deals",
+      "I've paid for results I never saw land",
+      "No proof of a single sale, and that's money lost",
+    ],
+  },
+  {
+    p: "DATA",
+    q: "Every lead has a price. If you don't know yours, you don't know how much profit you're leaving on each deal. Do you know your number?",
+    a: [
+      "Doesn't matter to me, the deals still close",
+      "I know roughly, close enough",
+      "I've overpaid for leads and felt it on margin",
+      "No, and that means profit is leaking on every deal",
     ],
   },
   {
     p: "SEARCH",
-    q: "How much of your traffic depends on paid ads that stop the moment you stop spending?",
+    q: "The day you stop paying for ads, do your buyers vanish with them? That's not marketing, that's renting customers.",
     a: [
-      "A lot, but ads are working, so why change it",
-      "I can't justify shifting budget without a guarantee",
-      "Every agency says they'll lower my paid dependence",
-      "More than I'd like, and that worries me",
+      "They'd keep coming, I'm not worried",
+      "Some would stay, some would drop",
+      "I've felt the drop the moment ads paused",
+      "They'd mostly vanish, and that's rented sales, not owned ones",
+    ],
+  },
+  {
+    p: "LOCAL",
+    q: "Shoppers are landing on your site, leaving without a word, and buying down the street. Do you know how many buyers you're losing at your own front door?",
+    a: [
+      "None, my site converts fine",
+      "A few bounce, but most stick",
+      "I know they leave, I just can't say how many sales it costs",
+      "No idea, and losing buyers at my own door is unacceptable",
+    ],
+  },
+  {
+    p: "LOCAL",
+    q: "A smaller store with less history is stealing buyers that should be yours. Do you know what they're doing to take your sales?",
+    a: [
+      "Nobody's taking my buyers",
+      "Maybe a few, but I'm still ahead",
+      "They're pulling deals from me and I can't see how",
+      "No, and watching sales walk to a smaller store stings",
+    ],
+  },
+  {
+    p: "LOCAL",
+    q: "Shoppers compare reviews before they ever call. If a competitor's profile looks stronger, that buyer never reaches you. Is yours winning them or losing them?",
+    a: [
+      "Winning, my reviews are fine",
+      "They're okay, probably not costing me much",
+      "I've likely lost buyers to better-looking competitors",
+      "Losing them, and those are calls I'll never even get",
     ],
   },
   {
     p: "SEARCH",
-    q: "Is your OEM website pulling the organic traffic it should, or leaking it to competitors?",
+    q: "Google and AI decide which dealer gets the ready-to-buy shopper. If they don't trust your store, that sale goes elsewhere. Do you know what they see?",
     a: [
-      "The OEM handles the website, so it's not on me",
-      "I don't think the website really drives sales",
-      "I'd need proof it's leaking before I act",
-      "I'm not sure, and I'd want that checked",
-    ],
-  },
-  {
-    p: "SEARCH",
-    q: "When a competitor with less history outranks you locally, do you know what they're doing differently?",
-    a: [
-      "It bugs me, but I assume they just spend more",
-      "I don't think rankings really affect my sales",
-      "People have promised to fix this before",
-      "No, and I'd genuinely want to know their playbook",
+      "I get found fine, no sales lost there",
+      "Maybe a few slip through the cracks",
+      "If they don't trust me, I'd never know the deals I missed",
+      "No idea what they see, and that could be costing me buyers daily",
     ],
   },
   {
     p: "LOCAL",
-    q: "Are your Google Business Profile and reviews translating into showroom visits, or just sitting there?",
+    q: "If we showed you the exact number of buyers and dollars you're losing to competitors each month, would that finally change your strategy?",
     a: [
-      "We already manage that in-house",
-      "Reviews don't really change who walks in",
-      "I can't add another thing to the budget right now",
-      "Probably just sitting there, and that's a missed opportunity",
-    ],
-  },
-  {
-    p: "LOCAL",
-    q: "Do you know how Google actually sees your dealership today, your Brand DNA?",
-    a: [
-      "That sounds like agency jargon to me",
-      "Not sure that translates into actual car sales",
-      "Interesting, but not a priority this quarter",
-      "No, and I'd want to see what mine looks like",
-    ],
-  },
-  {
-    p: "LOCAL",
-    q: "If we showed you three specific gaps holding your visibility back, would that change how you think about your current strategy?",
-    a: [
-      "I'd have to run it by the owner or GM first",
-      "Maybe, but I'm skeptical it'd be worth it",
-      "Not right now, too much going on",
-      "Yes, show me, I'm ready to act",
+      "I doubt I'm losing enough to matter",
+      "Maybe, if the number's real",
+      "If it's costing me actual deals, I'd have to act",
+      "Yes, show me the lost sales and I'll move now",
     ],
   },
 ];

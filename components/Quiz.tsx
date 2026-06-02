@@ -99,53 +99,71 @@ export default function Quiz({
   useEffect(() => () => { if (autoTimer.current) clearTimeout(autoTimer.current); }, []);
 
   const pct = Math.round(((idx + 1) / QUESTIONS.length) * 100);
+  // rocket climb: ground (Q1) -> nearly at the moon (last question)
+  const rocketPos = 8 + (idx / Math.max(1, QUESTIONS.length - 1)) * 78;
 
   return (
     <>
-      <section className={`stage ${anim}`} key={idx}>
-        <div className="progress-wrap">
-          <div className="progress-meta">
-            <span>
-              Question <b>{idx + 1}</b> of {QUESTIONS.length}
-            </span>
-            <span>{pct}%</span>
+      <div className="quiz-layout">
+        <div
+          className="rocket-rail"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={QUESTIONS.length}
+          aria-valuenow={idx + 1}
+          aria-label={`Question ${idx + 1} of ${QUESTIONS.length}`}
+        >
+          <div className="rr-moon" />
+          <div className="rr-line" />
+          <div className="rr-trail" style={{ height: `${rocketPos}%` }} />
+          <div className="rr-rocket" style={{ bottom: `${rocketPos}%` }} aria-hidden="true">
+            🚀
           </div>
-          <div className="track">
-            <div className="fill" style={{ width: `${pct}%` }} />
-          </div>
+          <div className="rr-ground" />
         </div>
 
-        <div className="card">
-          <span className={`qnum${isSeg ? " seg-tag" : ""}`}>
-            {isSeg ? "Quick context" : `Question ${String(idx + 1).padStart(2, "0")}`}
-          </span>
-          <div className="qtext">{Q.q}</div>
-          <div className="options" role="radiogroup" aria-label="Answer options">
-            {Q.a.map((text, i) => (
-              <button
-                key={i}
-                type="button"
-                role="radio"
-                aria-checked={selected === i}
-                className={`opt${selected === i ? " selected" : ""}`}
-                onClick={() => pick(i)}
-              >
-                <span className="dot" />
-                <span>{text}</span>
-                <span className="kbd">{i + 1}</span>
-              </button>
-            ))}
-          </div>
-          <div className="card-nav">
-            <button className="btn btn-ghost" onClick={goPrev}>
-              &larr; Back
-            </button>
-            <button className="btn btn-primary" onClick={goNext} disabled={selected == null}>
-              {idx === QUESTIONS.length - 1 ? "See my report →" : "Next →"}
-            </button>
-          </div>
+        <div className="quiz-main">
+          <section className={`stage ${anim}`} key={idx}>
+            <div className="progress-meta">
+              <span>
+                Question <b>{idx + 1}</b> of {QUESTIONS.length}
+              </span>
+              <span>{pct}% to the moon</span>
+            </div>
+
+            <div className="card">
+              <span className={`qnum${isSeg ? " seg-tag" : ""}`}>
+                {isSeg ? "Quick context" : `Question ${String(idx + 1).padStart(2, "0")}`}
+              </span>
+              <div className="qtext">{Q.q}</div>
+              <div className="options" role="radiogroup" aria-label="Answer options">
+                {Q.a.map((text, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected === i}
+                    className={`opt${selected === i ? " selected" : ""}`}
+                    onClick={() => pick(i)}
+                  >
+                    <span className="dot" />
+                    <span>{text}</span>
+                    <span className="kbd">{i + 1}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="card-nav">
+                <button className="btn btn-ghost" onClick={goPrev}>
+                  &larr; Back
+                </button>
+                <button className="btn btn-primary" onClick={goNext} disabled={selected == null}>
+                  {idx === QUESTIONS.length - 1 ? "See my report →" : "Next →"}
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
       <div className="coach">
         <div className="bubble">{coachLine(idx)}</div>

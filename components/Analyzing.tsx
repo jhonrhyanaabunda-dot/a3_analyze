@@ -10,13 +10,27 @@ const STEPS = [
   "Scoring your real visibility",
 ];
 
-export default function Analyzing() {
+// pillar-by-pillar progress text that cycles beneath the orbiting rocket
+const PILLARS = [
+  "Scanning your search visibility…",
+  "Checking AI engine mentions…",
+  "Measuring local pack position…",
+  "Reading your Brand DNA signals…",
+];
+
+export default function Analyzing({ launching = false }: { launching?: boolean }) {
   const [active, setActive] = useState(0);
+  const [pillar, setPillar] = useState(0);
 
   useEffect(() => {
     const t = setInterval(() => {
       setActive((a) => (a < STEPS.length - 1 ? a + 1 : a));
     }, 1600);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setPillar((p) => (p + 1) % PILLARS.length), 1700);
     return () => clearInterval(t);
   }, []);
 
@@ -41,6 +55,38 @@ export default function Analyzing() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </div>
+
+      <div className={`scan-orbit${launching ? " launching" : ""}`} aria-hidden="true">
+        <div className="scan-caption">
+          {launching ? <b>Report ready — to the moon! 🌙</b> : PILLARS[pillar]}
+        </div>
+        <div className="orbit-track">
+          <div className="orbit-rocket">
+            <div className="rocket-scale">
+              <div className="rocket-craft">
+                {/* premium rocket */}
+                <span className="r-glow" />
+                <span className="r-trail" />
+                <span className="r-flame" />
+                <span className="r-flame-core" />
+                <span className="spark spark-1" />
+                <span className="spark spark-2" />
+                <span className="spark spark-3" />
+                <span className="spark spark-4" />
+                <span className="r-fin-top" />
+                <span className="r-fin-bot" />
+                <span className="r-body" />
+                <span className="r-stripe" />
+                <span className="r-nose" />
+                <span className="r-window" />
+                {/* SAGGY — original undistorted artwork, native proportions */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="s-pilot" src="/saggy_pilot.png" alt="SAGGY piloting the rocket" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

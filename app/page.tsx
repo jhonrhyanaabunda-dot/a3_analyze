@@ -9,8 +9,9 @@ import Quiz from "@/components/Quiz";
 import Capture from "@/components/Capture";
 import Analyzing from "@/components/Analyzing";
 import Results from "@/components/Results";
+import Evidence from "@/components/Evidence";
 
-type Stage = "intro" | "quiz" | "capture" | "analyzing" | "results";
+type Stage = "intro" | "quiz" | "capture" | "analyzing" | "results" | "evidence";
 
 const blankAnswers = () => new Array(QUESTIONS.length).fill(null) as (number | null)[];
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -20,6 +21,7 @@ export default function Page() {
   const [answers, setAnswers] = useState<(number | null)[]>(blankAnswers);
   const [lead, setLead] = useState<Lead | null>(null);
   const [real, setReal] = useState<RealData | null>(null);
+  const [launching, setLaunching] = useState(false);
   const [toast, setToast] = useState<{ msg: string; show: boolean }>({ msg: "", show: false });
 
   const showToast = useCallback((msg: string) => {
@@ -43,6 +45,7 @@ export default function Page() {
   const runAnalysis = useCallback(
     async (l: Lead) => {
       setLead(l);
+      setLaunching(false);
       setStage("analyzing");
 
       // fire-and-forget lead capture (server forwards to webhook if configured)
@@ -79,6 +82,9 @@ export default function Page() {
         setReal(null);
         showToast("Live lookup unavailable, scoring from your answers");
       }
+      // launch SAGGY's rocket up to the moon, then reveal the score
+      setLaunching(true);
+      await delay(1000);
       setStage("results");
     },
     [answers, showToast]
@@ -117,8 +123,19 @@ export default function Page() {
           onSubmit={runAnalysis}
         />
       )}
-      {stage === "analyzing" && <Analyzing />}
-      {stage === "results" && <Results answers={answers} lead={lead} real={real} onRetake={retake} />}
+      {stage === "analyzing" && <Analyzing launching={launching} />}
+      {stage === "results" && (
+        <Results
+          answers={answers}
+          lead={lead}
+          real={real}
+          onRetake={retake}
+          onViewEvidence={() => setStage("evidence")}
+        />
+      )}
+      {stage === "evidence" && (
+        <Evidence answers={answers} lead={lead} real={real} onBack={() => setStage("results")} />
+      )}
 
       <div className={`toast${toast.show ? " show" : ""}`}>
         <span className="ck">✓</span>

@@ -36,3 +36,5 @@ mascot try.mov
 .node/
 mockup_evidence.png
 logo final.png
+# backups of original mascot assets (kept locally, not shipped)
+/public/_orig_backup/
