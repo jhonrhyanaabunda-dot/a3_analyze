@@ -72,7 +72,7 @@ export default function Capture({
 
   return (
     <section className="stage anim-left">
-      <div className="card">
+      <div className="card cap-card">
         <div className="cap-intro">
           <span className="tease">⬤ Your report is ready</span>
           <h2>
@@ -89,20 +89,22 @@ export default function Capture({
           </div>
         </div>
         <form onSubmit={submit} noValidate>
-          {field("name", "Your name", "Alex Morgan", "Please enter your name.")}
-          {field("dealership", "Dealership", "Morgan Acura of Dallas", "Please enter your dealership.")}
-          {field("email", "Work email", "alex@morganacura.com", "Please enter a valid email address.", "email")}
-          {field("website", "Dealership website", "morganacura.com", "Please enter your website so we can analyze it.")}
-          {field("city", "City / market", "Dallas, TX", "Please enter your city or market.")}
-          {field(
-            "phone",
-            <>
-              Phone <span style={{ textTransform: "none", color: "var(--medium)" }}>(optional)</span>
-            </>,
-            "(555) 123-4567",
-            "",
-            "tel"
-          )}
+          <div className="cap-fields">
+            {field("name", "Your name", "Alex Morgan", "Please enter your name.")}
+            {field("dealership", "Dealership", "Morgan Acura of Dallas", "Please enter your dealership.")}
+            {field("email", "Work email", "alex@morganacura.com", "Please enter a valid email address.", "email")}
+            {field("website", "Dealership website", "morganacura.com", "Please enter your website so we can analyze it.")}
+            {field("city", "City / market", "Dallas, TX", "Please enter your city or market.")}
+            {field(
+              "phone",
+              <>
+                Phone <span style={{ textTransform: "none", color: "var(--medium)" }}>(optional)</span>
+              </>,
+              "(555) 123-4567",
+              "",
+              "tel"
+            )}
+          </div>
           <div className="consent">
             By submitting, you agree to let A3 Brands email you your report and occasional insights.
             Unsubscribe anytime. We never sell your data.

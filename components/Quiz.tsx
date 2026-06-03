@@ -42,39 +42,47 @@ export default function Quiz({
   const [anim, setAnim] = useState<"anim-left" | "anim-right">("anim-left");
   const autoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const Q = QUESTIONS[idx];
-  const isSeg = Q.p === "SEGMENT";
+  const isSeg = Q?.p === "SEGMENT";
   const selected = answers[idx];
 
-  const goNext = () => {
-    if (answers[idx] == null) return;
-    if (idx === QUESTIONS.length - 1) {
+  const clearAuto = () => {
+    if (autoTimer.current) {
+      clearTimeout(autoTimer.current);
+      autoTimer.current = null;
+    }
+  };
+
+  // single advance path — clears any pending auto-advance so a quick Next can't double-step past the end
+  const advance = () => {
+    clearAuto();
+    if (idx >= QUESTIONS.length - 1) {
       onComplete();
       return;
     }
     setAnim("anim-left");
-    setIdx((i) => i + 1);
+    setIdx((i) => Math.min(i + 1, QUESTIONS.length - 1));
+  };
+
+  const goNext = () => {
+    if (answers[idx] == null) return;
+    advance();
   };
   const goPrev = () => {
+    clearAuto();
     if (idx === 0) {
       onBackToIntro();
       return;
     }
     setAnim("anim-right");
-    setIdx((i) => i - 1);
+    setIdx((i) => Math.max(0, i - 1));
   };
 
   const pick = (choice: number) => {
     const fresh = answers[idx] == null;
     onSelect(idx, choice);
     if (fresh) {
-      if (autoTimer.current) clearTimeout(autoTimer.current);
-      autoTimer.current = setTimeout(() => {
-        if (idx === QUESTIONS.length - 1) onComplete();
-        else {
-          setAnim("anim-left");
-          setIdx((i) => i + 1);
-        }
-      }, 280);
+      clearAuto();
+      autoTimer.current = setTimeout(advance, 280);
     }
   };
 
@@ -83,7 +91,7 @@ export default function Quiz({
     const onKey = (e: KeyboardEvent) => {
       if (["1", "2", "3", "4"].includes(e.key)) {
         const c = +e.key - 1;
-        if (c < Q.a.length) pick(c);
+        if (c < (Q?.a.length ?? 0)) pick(c);
       } else if (e.key === "Enter" && answers[idx] != null) {
         goNext();
       } else if (e.key === "Backspace") {
@@ -101,6 +109,9 @@ export default function Quiz({
   const pct = Math.round(((idx + 1) / QUESTIONS.length) * 100);
   // rocket climb: ground (Q1) -> nearly at the moon (last question)
   const rocketPos = 8 + (idx / Math.max(1, QUESTIONS.length - 1)) * 78;
+
+  // safety net: never render with an out-of-range question (advance()/onComplete handles the transition)
+  if (!Q) return null;
 
   return (
     <>

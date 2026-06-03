@@ -65,9 +65,8 @@ export default function Intro({ onStart }: { onStart: () => void }) {
         <div className="hero-grid">
           <div className="hero-copy">
             <h1>
-              AI is sending your buyers to
-              <br />
-              <span className="accent">another dealership.</span> See how many.
+              AI is sending your buyers to 
+              <span className="accent"> another dealership.</span> See how many.
             </h1>
             <p className="lede">
               Shoppers now ask ChatGPT, Gemini, and Google&apos;s AI for the best place to buy, and it

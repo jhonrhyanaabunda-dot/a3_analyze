@@ -77,8 +77,25 @@ export default function Page() {
 
       // keep the analyzing animation on screen for a beat
       const [data] = await Promise.all([analyze, delay(2600)]);
-      if (data) setReal(data);
-      else {
+      if (data) {
+        setReal(data);
+        // enrich the captured lead with the live scan result, so sales walks into
+        // the call already knowing the score and who's outranking this dealer
+        const topCompetitor = (data.ai?.competitors ?? []).find((c) => c && c.name)?.name ?? null;
+        fetch("/api/lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lead: l,
+            source: "visibility-analyzer",
+            phase: "analysis",
+            visibilityScore: data.overall,
+            siteHealth: data.siteHealth,
+            foundInSearch: data.ai?.foundInAI ?? null,
+            topCompetitor,
+          }),
+        }).catch(() => {});
+      } else {
         setReal(null);
         showToast("Live lookup unavailable, scoring from your answers");
       }
@@ -104,7 +121,6 @@ export default function Page() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="A3 Brands — Automotive SEO Experts" className="brand-logo" />
         </div>
-        <span className="pill-tag">Dealer Visibility Analyzer</span>
       </div>
 
       {stage === "intro" && <Intro onStart={start} />}

@@ -147,7 +147,7 @@ export default function Results({
           },
           {
             node: real.ai && real.ai.foundInAI ? "✓" : "✗",
-            cap: "Cited when shoppers ask AI for the best dealer",
+            cap: "Shows up in Google search for the best dealer",
           },
         ];
       })()
@@ -237,10 +237,9 @@ export default function Results({
           <p className="ai-hero-body">
             {primaryRival ? (
               <>
-                Right now, when a shopper asks AI or Google for the best dealer in {cityName},{" "}
-                <b>{primaryRival.name}</b> comes up
-                {primaryRival.term ? <> for &ldquo;{primaryRival.term}&rdquo;</> : null}, not {dealerName}. Those
-                are buyers who never call you and never reach your lot.
+                Right now, when a shopper searches for the best dealer in {cityName},{" "}
+                <b>{primaryRival.name}</b> shows up before you, not {dealerName}. Those are buyers who never
+                call you and never reach your lot.
               </>
             ) : real && !found ? (
               <>
@@ -262,23 +261,22 @@ export default function Results({
         <div {...rv("proof-panel", 0)}>
           <div className="proof-card">
             <div className="proof-eyebrow">●&nbsp; The proof</div>
-            <div className="proof-head">We asked AI for the best dealer in {cityName}. Here&apos;s the answer:</div>
+            <div className="proof-head">We searched for the best dealer in {cityName}. Here&apos;s who came up:</div>
             <div className="proof-bubble">
               <div className="proof-ai">
-                <span className="dot">AI</span>
+                <span className="dot">SERP</span>
                 <div className="proof-a">
                   {primaryRival ? (
                     <>
-                      It points shoppers to <b>{primaryRival.name}</b>
-                      {rivals[1] ? <> and <b>{rivals[1].name}</b></> : null}
-                      {primaryRival.term ? <> for &ldquo;{primaryRival.term}&rdquo;</> : null}.
+                      <b>{primaryRival.name}</b>
+                      {rivals[1] ? <> and <b>{rivals[1].name}</b></> : null} rank above you.
                     </>
                   ) : (
-                    <>It points shoppers to several nearby dealers.</>
+                    <>Several nearby dealers rank above you.</>
                   )}
                 </div>
               </div>
-              <div className="proof-verdict">✗ {dealerName} isn&apos;t in the answer.</div>
+              <div className="proof-verdict">✗ {dealerName} isn&apos;t at the top.</div>
             </div>
             {lostLeads && (
               <p className="proof-leads">
@@ -367,16 +365,16 @@ export default function Results({
 
       {real && found && !primaryRival && (
         <div {...rv("serp-mock", 2)}>
-          <div className="sm-head">When a shopper asks AI for the best dealer in {cityName}…</div>
+          <div className="sm-head">When a shopper searches Google for the best dealer in {cityName}…</div>
           <div className="sm-bubble">
             <div className="sm-q">💬 &ldquo;Best place to buy a car near {cityName}?&rdquo;</div>
             <div className="sm-ai">
-              <span className="dot">AI</span>
+              <span className="dot">Google</span>
               <div className="sm-a">
-                Top recommendations include <b>{dealerName}</b>, noted for its reviews and local presence.
+                <b>{dealerName}</b> shows up among the top results, noted for its reviews and local presence.
               </div>
             </div>
-            <div className="sm-verdict good">✓ You&apos;re being recommended</div>
+            <div className="sm-verdict good">✓ You&apos;re showing up in search</div>
           </div>
         </div>
       )}

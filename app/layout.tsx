@@ -54,6 +54,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="moon-orb" />
             <div className="moon-shade" />
           </div>
+          <div className="meteors">
+            {[
+              { l: "-6%", t: "6%", d: "0s", u: "7s" },
+              { l: "4%", t: "26%", d: "1.6s", u: "8.5s" },
+              { l: "-2%", t: "44%", d: "3.2s", u: "7.5s" },
+              { l: "12%", t: "12%", d: "4.4s", u: "9s" },
+              { l: "8%", t: "58%", d: "5.8s", u: "8s" },
+              { l: "20%", t: "34%", d: "7.1s", u: "10s" },
+              { l: "0%", t: "70%", d: "8.6s", u: "9.5s" },
+            ].map((m, i) => (
+              <i
+                key={i}
+                className="meteor"
+                style={{ left: m.l, top: m.t, animationDelay: m.d, animationDuration: m.u }}
+              />
+            ))}
+          </div>
         </div>
         {children}
       </body>

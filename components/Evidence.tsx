@@ -65,8 +65,8 @@ export default function Evidence({
     if (ai) {
       out.push(
         ai.foundInAI
-          ? { sev: "good", text: "You're surfaced when shoppers ask AI for the best dealer in your market." }
-          : { sev: "warn", text: "You're absent from Google AI Overviews and AI recommendations for your market." }
+          ? { sev: "good", text: "You show up in Google search for the best dealer in your market." }
+          : { sev: "warn", text: "You're not showing up in Google search for the best dealer in your market." }
       );
     }
     // bad first, then warn, then good; cap at 4
@@ -174,13 +174,14 @@ export default function Evidence({
                   </span>
                 ))}
               </div>
+              <div className="ev-note">On-page SEO is measured live; AI &amp; search and local are estimated from your live signals.</div>
             </div>
           )}
 
           {/* A.3 — who's outranking you */}
           {rivals.length > 0 && (
             <div className="ev-block">
-              <div className="ev-label">Who&apos;s outranking you locally</div>
+              <div className="ev-label">Who&apos;s outranking you in search</div>
               <div className="ev-ranks">
                 {rivals.map((c, i) => (
                   <div className="ev-rank" key={i}>

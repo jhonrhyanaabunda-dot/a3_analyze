@@ -118,7 +118,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     p: "LOCAL",
-    q: "If we showed you the exact number of buyers and dollars you're losing to competitors each month, would that finally change your strategy?",
+    q: "If we showed you the exact number of buyers and deals you're losing to competitors each month, would that finally change your strategy?",
     a: [
       "I doubt I'm losing enough to matter",
       "Maybe, if the number's real",

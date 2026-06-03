@@ -67,24 +67,17 @@ export default function Analyzing({ launching = false }: { launching?: boolean }
           <div className="orbit-rocket">
             <div className="rocket-scale">
               <div className="rocket-craft">
-                {/* premium rocket */}
-                <span className="r-glow" />
-                <span className="r-trail" />
-                <span className="r-flame" />
-                <span className="r-flame-core" />
-                <span className="spark spark-1" />
-                <span className="spark spark-2" />
-                <span className="spark spark-3" />
-                <span className="spark spark-4" />
-                <span className="r-fin-top" />
-                <span className="r-fin-bot" />
-                <span className="r-body" />
-                <span className="r-stripe" />
-                <span className="r-nose" />
-                <span className="r-window" />
-                {/* SAGGY — original undistorted artwork, native proportions */}
+                {/* animated turbo exhaust plume + core glow streaming left from the nozzle */}
+                <span className="r-plume" />
+                <span className="r-turbo" />
+                {/* SAGGY piloting the rocket — single illustration */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="s-pilot" src="/saggy_pilot.png" alt="SAGGY piloting the rocket" />
+                <img className="rocket-img" src="/saggy_rocketship.png" alt="SAGGY piloting the rocket" />
+                {/* sparks streaming back from the nozzle */}
+                <span className="r-spk r-spk1" />
+                <span className="r-spk r-spk2" />
+                <span className="r-spk r-spk3" />
+                <span className="r-spk r-spk4" />
               </div>
             </div>
           </div>
