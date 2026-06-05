@@ -242,7 +242,7 @@ body {
 @keyframes slideR { from { opacity:0; transform:translateX(-46px);} to {opacity:1; transform:none;} }
 
 /* ---------- Progress ---------- */
-.progress-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; letter-spacing: 0.02em; color: var(--medium); margin-bottom: 14px; }
+.progress-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; letter-spacing: 0.02em; color: var(--medium); margin-bottom: 14px; }
 .progress-meta b { color: var(--white); font-weight: 700; }
 .progress-meta .q-left { color: var(--emerald); font-weight: 600; }
 .progress-meta .q-left b { color: var(--emerald); }
