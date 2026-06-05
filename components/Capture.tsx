@@ -5,6 +5,18 @@ import type { Lead } from "@/lib/types";
 
 const emailOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
+// normalize a website/URL to its bare host (no protocol, no www, no path)
+const hostOf = (s: string) =>
+  s.trim().toLowerCase().replace(/^[a-z]+:\/\//, "").split(/[/?#]/)[0].replace(/^www\./, "");
+const emailHost = (email: string) => (email.trim().toLowerCase().split("@")[1] || "").replace(/^www\./, "");
+// the work email's domain must match the dealership website (allowing sub/parent domains)
+const domainsMatch = (email: string, website: string) => {
+  const e = emailHost(email);
+  const w = hostOf(website);
+  if (!e || !w || !e.includes(".") || !w.includes(".")) return false;
+  return e === w || e.endsWith("." + w) || w.endsWith("." + e);
+};
+
 type FieldKey = "name" | "dealership" | "email" | "website" | "city" | "phone";
 
 export default function Capture({
@@ -30,11 +42,13 @@ export default function Capture({
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    const websiteFilled = !!f.website.trim();
     const next: Partial<Record<FieldKey, boolean>> = {
       name: !f.name.trim(),
       dealership: !f.dealership.trim(),
-      email: !emailOk(f.email),
-      website: !f.website.trim(),
+      // valid format AND domain matches the website (so the lead is a real decision-maker at that store)
+      email: !emailOk(f.email) || (websiteFilled && !domainsMatch(f.email, f.website)),
+      website: !websiteFilled,
       city: !f.city.trim(),
     };
     setErr(next);
@@ -48,6 +62,11 @@ export default function Capture({
       phone: f.phone.trim(),
     });
   };
+
+  // email error reads differently for a bad format vs. a domain that doesn't match the website
+  const emailMsg = emailOk(f.email)
+    ? "Use your work email — it should match your website domain (e.g. you@yourdealer.com)."
+    : "Please enter a valid work email address.";
 
   const field = (
     id: FieldKey,
@@ -92,7 +111,7 @@ export default function Capture({
           <div className="cap-fields">
             {field("name", "Your name", "Alex Morgan", "Please enter your name.")}
             {field("dealership", "Dealership", "Morgan Acura of Dallas", "Please enter your dealership.")}
-            {field("email", "Work email", "alex@morganacura.com", "Please enter a valid email address.", "email")}
+            {field("email", "Work email", "alex@morganacura.com", emailMsg, "email")}
             {field("website", "Dealership website", "morganacura.com", "Please enter your website so we can analyze it.")}
             {field("city", "City / market", "Dallas, TX", "Please enter your city or market.")}
             {field(

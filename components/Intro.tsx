@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import Mascot from "./Mascot";
 import CountUp from "./CountUp";
+import { QUESTIONS } from "@/lib/questions";
 
 // how long SAGGY keeps talking before going quiet — ~16s = two clean loops of the 8s clip
 const TALK_MS = 16000;
@@ -70,13 +71,13 @@ export default function Intro({ onStart }: { onStart: () => void }) {
             </h1>
             <p className="lede">
               Shoppers now ask ChatGPT, Gemini, and Google&apos;s AI for the best place to buy, and it
-              names a dealer. If that isn&apos;t you, the lead never reaches your store. 12 sharp
+              names a dealer. If that isn&apos;t you, the lead never reaches your store. {QUESTIONS.length} sharp
               questions, two minutes, and a real read on what it&apos;s costing you.
             </p>
             <div className="stats">
               <div className="stat">
                 <div className="n">
-                  <CountUp value={12} duration={700} />
+                  <CountUp value={QUESTIONS.length} duration={700} />
                 </div>
                 <div className="l">Diagnostic questions</div>
               </div>

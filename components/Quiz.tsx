@@ -107,6 +107,7 @@ export default function Quiz({
   useEffect(() => () => { if (autoTimer.current) clearTimeout(autoTimer.current); }, []);
 
   const pct = Math.round(((idx + 1) / QUESTIONS.length) * 100);
+  const remaining = QUESTIONS.length - (idx + 1);
   // rocket climb: ground (Q1) -> nearly at the moon (last question)
   const rocketPos = 8 + (idx / Math.max(1, QUESTIONS.length - 1)) * 78;
 
@@ -139,7 +140,15 @@ export default function Quiz({
               <span>
                 Question <b>{idx + 1}</b> of {QUESTIONS.length}
               </span>
-              <span>{pct}% to the moon</span>
+              <span className="q-left">
+                {remaining > 0 ? (
+                  <>
+                    <b>{remaining}</b> {remaining === 1 ? "question" : "questions"} left
+                  </>
+                ) : (
+                  "Last question"
+                )}
+              </span>
             </div>
 
             <div className="card">
@@ -172,6 +181,15 @@ export default function Quiz({
                 </button>
               </div>
             </div>
+
+            {idx >= 2 && remaining > 0 && (
+              <div className="quiz-skip">
+                Short on time?{" "}
+                <button type="button" className="quiz-skip-link" onClick={onComplete}>
+                  Skip ahead to my AI Visibility Score &rarr;
+                </button>
+              </div>
+            )}
           </section>
         </div>
       </div>

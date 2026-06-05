@@ -140,7 +140,7 @@ body {
    scoped to direct children of .shell so the quiz's own question card (nested in
    .quiz-layout) is NOT capped and can use the full widened quiz width. */
 .shell > .stage > .card { max-width: 600px; margin-left: auto; margin-right: auto; }
-#results { max-width: 840px; margin: 0 auto; }
+#results { max-width: 840px; margin: 0 auto; padding-bottom: 76px; }
 
 /* ---------- Header ---------- */
 /* full-bleed header: logo sits in the upper-left corner of the page, pill upper-right */
@@ -244,6 +244,13 @@ body {
 /* ---------- Progress ---------- */
 .progress-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; letter-spacing: 0.02em; color: var(--medium); margin-bottom: 14px; }
 .progress-meta b { color: var(--white); font-weight: 700; }
+.progress-meta .q-left { color: var(--emerald); font-weight: 600; }
+.progress-meta .q-left b { color: var(--emerald); }
+
+/* "skip ahead to my score" escape hatch for time-pressed GMs/MDs (shown from Q3) */
+.quiz-skip { text-align: center; margin-top: 14px; font-size: 13px; color: var(--medium); }
+.quiz-skip-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--emerald); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.quiz-skip-link:hover { color: #34d873; }
 
 /* quiz layout: vertical rocket rail to the left of the question card */
 .quiz-layout { display: flex; gap: 22px; align-items: stretch; max-width: 1080px; margin: 0 auto; }
@@ -504,45 +511,47 @@ body {
   80%  { transform: translate(-0.4px,-0.5px) rotate(-0.16deg); }
 }
 
-/* exhaust PLUME streaming left out of the nozzle (hot at the nozzle, fading out to the left) */
+/* exhaust BLAST firing down-left out of the nozzle (above the ship so it's visible).
+   nozzle sits at ~(81,198) in the 260x300 flight box; flame is bright at the nozzle, fading to the tip. */
 .r-plume {
-  position: absolute; z-index: 5; left: 18px; top: 145px;
-  width: 100px; height: 28px;
-  background: linear-gradient(90deg, rgba(120,180,255,0) 0%, rgba(90,160,255,0.45) 24%, rgba(255,140,40,0.85) 66%, rgba(255,232,150,0.98) 100%);
-  border-radius: 50% 14px 14px 50% / 50% 50% 50% 50%;
-  filter: blur(4px); transform-origin: right center;
+  position: absolute; z-index: 7; left: -7px; top: 182px;
+  width: 92px; height: 32px;
+  background: linear-gradient(90deg, rgba(120,180,255,0) 0%, rgba(90,160,255,0.42) 22%, rgba(255,140,40,0.88) 62%, rgba(255,238,160,0.98) 100%);
+  border-radius: 50% 16px 16px 50% / 50%;
+  filter: blur(4px); transform-origin: 100% 50%;
+  transform: rotate(-12deg);
   animation: plumeFlick 0.1s ease-in-out infinite alternate;
 }
 @keyframes plumeFlick {
-  from { transform: scaleX(0.74) scaleY(0.82); opacity: 0.7; }
-  to   { transform: scaleX(1.14) scaleY(1.12); opacity: 1; }
+  from { transform: rotate(-12deg) scaleX(0.72) scaleY(0.82); opacity: 0.7; }
+  to   { transform: rotate(-12deg) scaleX(1.16) scaleY(1.14); opacity: 1; }
 }
 
 /* bright flickering core glow right at the nozzle mouth */
 .r-turbo {
-  position: absolute; z-index: 5; left: 86px; top: 138px;
-  width: 56px; height: 42px; border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(255,255,235,0.98) 0%, rgba(255,200,90,0.9) 32%, rgba(255,110,30,0.55) 60%, transparent 78%);
-  filter: blur(3px); transform-origin: 75% 50%;
+  position: absolute; z-index: 7; left: 57px; top: 178px;
+  width: 50px; height: 42px; border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255,255,235,0.98) 0%, rgba(255,200,90,0.92) 32%, rgba(255,110,30,0.58) 60%, transparent 78%);
+  filter: blur(3px); transform-origin: center;
   animation: turboFlick 0.08s ease-in-out infinite alternate;
 }
 @keyframes turboFlick {
-  from { transform: scale(0.8) translateX(2px); opacity: 0.72; }
-  to   { transform: scale(1.22) translateX(-4px); opacity: 1; }
+  from { transform: scale(0.78); opacity: 0.72; }
+  to   { transform: scale(1.25); opacity: 1; }
 }
 
-/* particle sparks streaming left off the nozzle */
+/* particle sparks streaming down-left off the nozzle */
 .r-spk {
-  position: absolute; z-index: 6; width: 5px; height: 5px; border-radius: 50%;
+  position: absolute; z-index: 7; width: 5px; height: 5px; border-radius: 50%;
   background: #ffd36b; box-shadow: 0 0 6px 1px rgba(255,180,80,0.95);
 }
-.r-spk1 { left: 106px; top: 158px; animation: spkFly 0.6s linear infinite; }
-.r-spk2 { left: 112px; top: 150px; animation: spkFly 0.82s linear infinite 0.16s; background: #a7d8ff; box-shadow: 0 0 6px 1px rgba(120,180,255,0.95); }
-.r-spk3 { left: 100px; top: 166px; animation: spkFly 0.7s linear infinite 0.34s; }
-.r-spk4 { left: 114px; top: 162px; animation: spkFly 0.74s linear infinite 0.5s; background: #9bf0c0; box-shadow: 0 0 6px 1px rgba(29,185,84,0.9); }
+.r-spk1 { left: 78px; top: 196px; animation: spkFly 0.6s linear infinite; }
+.r-spk2 { left: 82px; top: 190px; animation: spkFly 0.82s linear infinite 0.16s; background: #a7d8ff; box-shadow: 0 0 6px 1px rgba(120,180,255,0.95); }
+.r-spk3 { left: 74px; top: 202px; animation: spkFly 0.7s linear infinite 0.34s; }
+.r-spk4 { left: 80px; top: 200px; animation: spkFly 0.74s linear infinite 0.5s; background: #9bf0c0; box-shadow: 0 0 6px 1px rgba(29,185,84,0.9); }
 @keyframes spkFly {
   0%   { transform: translate(0,0) scale(1); opacity: 1; }
-  100% { transform: translate(-54px, 5px) scale(0.2); opacity: 0; }
+  100% { transform: translate(-48px, 12px) scale(0.2); opacity: 0; }
 }
 
 /* report ready -> final flight straight UP to the moon, into the score reveal */
@@ -617,6 +626,42 @@ body {
 .ai-hero-title-accent { color:var(--danger); }
 .ai-hero-body { font-size:16px; line-height:26px; color:#C9CDD4; max-width:600px; margin:0 auto; }
 .ai-hero-body b { color:#fff; font-weight:900; }
+
+/* one-line factual verdict under the report header */
+.result-verdict { font-size:14px; line-height:21px; color:#aeb6c4; max-width:620px; margin:0 auto 14px; }
+
+/* credibility stamp + methodology toggle near the score */
+.scan-stamp { font-size:12px; color:var(--medium); margin-bottom:6px; }
+.method-toggle { background:none; border:0; color:var(--emerald); font:inherit; font-size:12px; cursor:pointer; padding:0; text-decoration:underline; }
+.method-note { max-width:520px; margin:0 auto 14px; font-size:12.5px; line-height:19px; color:#aeb6c4; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:12px 16px; }
+
+/* trust strip above the CTA */
+.trust-strip { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px; margin:30px auto 14px; font-size:13px; color:#9aa2af; }
+.trust-strip b { color:#e6eaf0; font-weight:800; }
+.trust-strip .ts-dot { color:var(--emerald); }
+@media (max-width:560px){ .trust-strip .ts-dot { display:none; } .trust-strip { gap:6px 14px; } }
+
+/* sticky CTA bar that follows on scroll */
+.result-sticky {
+  position:fixed; left:0; right:0; bottom:0; z-index:60;
+  display:flex; align-items:center; gap:16px; padding:12px 24px;
+  background:rgba(10,13,24,0.92); backdrop-filter:blur(10px);
+  border-top:1px solid rgba(255,255,255,0.08); box-shadow:0 -8px 30px rgba(0,0,0,0.4);
+  transform:translateY(120%); transition:transform .35s cubic-bezier(.22,.61,.36,1);
+}
+.result-sticky.show { transform:translateY(0); }
+.result-sticky .rs-score { font-size:30px; font-weight:900; line-height:1; flex:0 0 auto; }
+.result-sticky .rs-score span { font-size:13px; color:var(--medium); font-weight:700; }
+.result-sticky .rs-label { flex:1 1 auto; min-width:0; font-size:13px; color:#C9CDD4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.result-sticky .rs-label b { color:#fff; }
+.result-sticky .btn { flex:0 0 auto; padding:12px 22px; }
+@media (max-width:560px){
+  .result-sticky { padding:10px 14px; gap:10px; }
+  .result-sticky .rs-label { display:none; }
+  .result-sticky .rs-score { font-size:24px; }
+  .result-sticky .btn { flex:1 1 auto; }
+}
+@media (prefers-reduced-motion: reduce){ .result-sticky { transition:none; } }
 
 /* the proof — real AI answer evidence + the leads it routes away */
 .proof-panel { max-width:600px; margin:24px auto 36px; }
@@ -766,7 +811,7 @@ body {
 
 @media print {
   body { background:#fff; color:#000; }
-  .topbar, .cta-band, .btn, .toast, .coach, .space-bg { display:none !important; }
+  .topbar, .cta-band, .btn, .toast, .coach, .space-bg, .result-sticky { display:none !important; }
   .benchmark, .proj .tile, .rv-card, .proof-card { background:#fff; border:1px solid #E5E7EB; color:#000; }
   .ai-hero-title { color:#000; }
   .ai-hero-body, .result-head h2, .proof-leads { color:#000; }

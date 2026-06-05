@@ -2,13 +2,13 @@ import type { Pillar, Question } from "./types";
 
 /**
  * Each option scores 1 (worst, in denial) -> 4 (best, aware and ready to act).
- * All 12 questions are scored. Pillars: SEARCH (rank/AI/OEM), DATA (measurement),
- * LOCAL (GBP/reviews/Brand DNA) — 4 questions each, for the weakest-pillar nudge.
+ * All questions are scored. Pillars: SEARCH (rank/AI/OEM), DATA (leads/cost/measurement),
+ * LOCAL (reviews/site/Brand DNA) — used for the weakest-pillar nudge.
  */
 export const QUESTIONS: Question[] = [
   {
     p: "SEARCH",
-    q: "Right now, buyers in your area are calling a competitor that shows up before you. How many of those sales are you losing every month?",
+    q: "Do you know how many local buyers choose a higher-ranked dealer?",
     a: [
       "None that I know of, I figure I get my share",
       "Probably some, but I've never put a number on it",
@@ -18,17 +18,17 @@ export const QUESTIONS: Question[] = [
   },
   {
     p: "DATA",
-    q: "Your marketing spend hasn't dropped, but your leads have. That's buyers you paid for and never got. Do you know where they went?",
+    q: "Do you know which sources your leads come from?",
     a: [
-      "My leads are fine, I'm not losing any",
-      "Maybe a few slip, but nothing serious",
-      "I've lost leads before and never found out why",
-      "No, and paying for buyers I never receive is a problem",
+      "I assume the usual places",
+      "I have a rough idea",
+      "Not really, the sources blur together",
+      "No, and that blind spot worries me",
     ],
   },
   {
     p: "SEARCH",
-    q: "When AI recommends a dealer and it isn't you, that buyer drives to your competitor's lot. Do you know how many sales AI is quietly handing away?",
+    q: "Do you know whether AI tools recommend your store to shoppers?",
     a: [
       "Zero, my buyers don't use AI",
       "Maybe a handful, but it can't be many",
@@ -38,27 +38,27 @@ export const QUESTIONS: Question[] = [
   },
   {
     p: "DATA",
-    q: "Be honest: what's the real reason your store isn't closing more deals from online shoppers?",
+    q: "Are your leads down compared to last year?",
     a: [
-      "We're closing plenty, no deals are slipping",
-      "A few get away but that's just the business",
-      "I lose deals online and can't pinpoint why",
-      "I'm leaving real money on the table and want it fixed",
+      "No, we're steady or up",
+      "Maybe a little, hard to say",
+      "Yes, and I'm not sure why",
+      "Yes, and it's a real concern",
     ],
   },
   {
     p: "DATA",
-    q: "You pay your agency every month. Can they prove a single sale or lead came from it, or are you funding work that never reached your bottom line?",
+    q: "Can your agency prove it drives real sales?",
     a: [
-      "I assume the sales are there somewhere",
-      "They show me activity, but not actual deals",
-      "I've paid for results I never saw land",
-      "No proof of a single sale, and that's money lost",
+      "I assume it's working",
+      "They show activity, not real sales",
+      "I've paid with little to show for it",
+      "No, I've never seen real proof",
     ],
   },
   {
     p: "DATA",
-    q: "Every lead has a price. If you don't know yours, you don't know how much profit you're leaving on each deal. Do you know your number?",
+    q: "Do you know your true cost per lead?",
     a: [
       "Doesn't matter to me, the deals still close",
       "I know roughly, close enough",
@@ -68,37 +68,27 @@ export const QUESTIONS: Question[] = [
   },
   {
     p: "SEARCH",
-    q: "The day you stop paying for ads, do your buyers vanish with them? That's not marketing, that's renting customers.",
+    q: "If you paused ads, would the leads keep coming?",
     a: [
-      "They'd keep coming, I'm not worried",
+      "Yes, my organic leads are strong",
       "Some would stay, some would drop",
       "I've felt the drop the moment ads paused",
-      "They'd mostly vanish, and that's rented sales, not owned ones",
+      "No, they'd mostly dry up without ads",
     ],
   },
   {
     p: "LOCAL",
-    q: "Shoppers are landing on your site, leaving without a word, and buying down the street. Do you know how many buyers you're losing at your own front door?",
+    q: "Do you know how long shoppers stay on your site?",
     a: [
-      "None, my site converts fine",
-      "A few bounce, but most stick",
-      "I know they leave, I just can't say how many sales it costs",
-      "No idea, and losing buyers at my own door is unacceptable",
+      "I assume long enough",
+      "Roughly, I'd guess it's okay",
+      "I know they leave fast, not why",
+      "No idea, and that could be lost leads",
     ],
   },
   {
     p: "LOCAL",
-    q: "A smaller store with less history is stealing buyers that should be yours. Do you know what they're doing to take your sales?",
-    a: [
-      "Nobody's taking my buyers",
-      "Maybe a few, but I'm still ahead",
-      "They're pulling deals from me and I can't see how",
-      "No, and watching sales walk to a smaller store stings",
-    ],
-  },
-  {
-    p: "LOCAL",
-    q: "Shoppers compare reviews before they ever call. If a competitor's profile looks stronger, that buyer never reaches you. Is yours winning them or losing them?",
+    q: "How do your reviews compare to nearby dealers?",
     a: [
       "Winning, my reviews are fine",
       "They're okay, probably not costing me much",
@@ -108,7 +98,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     p: "SEARCH",
-    q: "Google and AI decide which dealer gets the ready-to-buy shopper. If they don't trust your store, that sale goes elsewhere. Do you know what they see?",
+    q: "Do you know what Google and AI see when they rank your store?",
     a: [
       "I get found fine, no sales lost there",
       "Maybe a few slip through the cracks",
@@ -118,12 +108,12 @@ export const QUESTIONS: Question[] = [
   },
   {
     p: "LOCAL",
-    q: "If we showed you the exact number of buyers and deals you're losing to competitors each month, would that finally change your strategy?",
+    q: "If ownership saw these numbers, would they push for change?",
     a: [
-      "I doubt I'm losing enough to matter",
-      "Maybe, if the number's real",
-      "If it's costing me actual deals, I'd have to act",
-      "Yes, show me the lost sales and I'll move now",
+      "They're happy with where we are",
+      "Maybe, if the gap was clear",
+      "They'd want a plan, and fast",
+      "Yes, and I'd lead that change",
     ],
   },
 ];

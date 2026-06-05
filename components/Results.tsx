@@ -40,6 +40,8 @@ export default function Results({
   const [youLeft, setYouLeft] = useState(0);
   const [climb, setClimb] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [showMethod, setShowMethod] = useState(false);
+  const [showSticky, setShowSticky] = useState(false);
   const rv = (base: string, order: number) => ({
     className: `${base} reveal${revealed ? " inview" : ""}`,
     style: { transitionDelay: `${order * 0.12}s` } as React.CSSProperties,
@@ -90,18 +92,12 @@ export default function Results({
     return () => cancelAnimationFrame(r);
   }, []);
 
-  // Saggy speaks once on the results screen (this mounts right after the submit gesture)
+  // sticky CTA bar appears once the hero/score has scrolled past
   useEffect(() => {
-    const v = ctaVid.current;
-    if (!v) return;
-    try {
-      v.muted = false;
-      v.currentTime = 0;
-      const p = v.play();
-      if (p && p.catch) p.catch(() => { v.muted = true; });
-    } catch { /* ignore */ }
-    const t = setTimeout(() => { if (v) v.muted = true; }, 8300);
-    return () => clearTimeout(t);
+    const onScroll = () => setShowSticky(window.scrollY > 440);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const greet = lead?.name ? lead.name.split(" ")[0].replace(/^./, (c) => c.toUpperCase()) + ", " : "";
@@ -184,12 +180,25 @@ export default function Results({
   const rivals = (real?.ai?.competitors ?? []).filter((c) => c && c.name).slice(0, 2);
   const primaryRival = rivals[0] || null;
 
-  // AI-pain hero headline — names a real competitor ONLY when the scan returned one
+  // score-adaptive, search-accurate hero (no AI overclaim — Gemini is off, so we only claim search)
+  const firstName = (lead?.name || "").trim().split(/\s+/)[0]?.replace(/^./, (c) => c.toUpperCase()) || "";
+  const strong = pct >= 70;
+  const heroEyebrow = strong && !primaryRival && found ? "Your visibility is strong" : "The real cost of your visibility gap";
   const heroTitle = primaryRival
-    ? `AI is sending your buyers to ${primaryRival.name}.`
+    ? `${primaryRival.name} is showing up before you in ${cityName}.`
     : real && !found
-    ? "AI isn't sending buyers to your store."
-    : "Shoppers ask AI first now. Is it pointing them to you?";
+    ? `${dealerName} isn't showing up for ${cityName} buyers.`
+    : strong
+    ? `${firstName ? firstName + ", you" : "You"}'re showing up first in ${cityName}.`
+    : `Are you showing up when ${cityName} shoppers search?`;
+  // one-line factual verdict shown up top, before the scroll
+  const verdict = primaryRival
+    ? `You're being out-ranked in ${cityName} dealer search — see who, and what it's costing you.`
+    : real && !found
+    ? `You're not showing up in ${cityName} dealer search yet — here's the gap to close.`
+    : strong
+    ? `You rank near the top of ${cityName} dealer search — strong, with a lead to defend.`
+    : `You're mid-pack in ${cityName} dealer search — real room to climb.`;
 
   // lost leads — ranged, from the scan's REAL search demand only (never invented; in leads, not $)
   const lostLeads = lostBuyersRange(pct, real?.ai?.local_search_volume);
@@ -231,8 +240,9 @@ export default function Results({
           Visibility Report &nbsp;·&nbsp; <b>{lead?.dealership || "Your dealership"}</b>
           {dateStr ? <> &nbsp;·&nbsp; {dateStr}</> : null}
         </div>
+        <div className="result-verdict">{verdict}</div>
         <div className="ai-hero">
-          <div className="ai-hero-eyebrow">●&nbsp; The real cost of your visibility gap</div>
+          <div className="ai-hero-eyebrow">●&nbsp; {heroEyebrow}</div>
           <h2 className="ai-hero-title">{heroTitle}</h2>
           <p className="ai-hero-body">
             {primaryRival ? (
@@ -243,13 +253,18 @@ export default function Results({
               </>
             ) : real && !found ? (
               <>
-                When shoppers ask AI or Google for the best dealer in {cityName}, your store isn&apos;t in the
-                answer. Every one of those is a lead landing with a competitor instead of in your CRM.
+                When shoppers search for the best dealer in {cityName}, your store isn&apos;t on the list.
+                Every one of those is a lead landing with a competitor instead of in your CRM.
+              </>
+            ) : strong ? (
+              <>
+                When shoppers search for the best dealer in {cityName}, {dealerName} is showing up, ahead of
+                most of your market. The opportunity now is defending that lead before a competitor closes the gap.
               </>
             ) : (
               <>
-                When a buyer asks AI for the best dealer in {cityName}, it names a store. Every answer that
-                doesn&apos;t name {dealerName} is a ready-to-buy buyer routed to a competitor.
+                When shoppers search for the best dealer in {cityName}, you&apos;re in the mix but not on top.
+                Every spot you climb is a buyer who picks you instead of the store down the street.
               </>
             )}
           </p>
@@ -281,8 +296,8 @@ export default function Results({
             {lostLeads && (
               <p className="proof-leads">
                 That answer reaches an estimated <b>{lostLeads.lo} to {lostLeads.hi}</b> buyers a month searching
-                your market, and right now they&apos;re pointed to {primaryRival ? primaryRival.name : "a competitor"},
-                not you.
+                your market &mdash; roughly <b>{lostLeads.lo * 12} to {lostLeads.hi * 12} a year</b> &mdash; and
+                right now they&apos;re pointed to {primaryRival ? primaryRival.name : "a competitor"}, not you.
               </p>
             )}
             <div className="proof-note">Based on live search results and demand for your market.</div>
@@ -293,6 +308,19 @@ export default function Results({
       {/* the score behind it (supporting proof) */}
       <div className="result-head">
         <div className="eyebrow">The visibility score behind it</div>
+        <div className="scan-stamp">
+          ●&nbsp; Live scan{dateStr ? <> · {dateStr}</> : null} ·{" "}
+          <button type="button" className="method-toggle" onClick={() => setShowMethod((s) => !s)}>
+            How we measure this {showMethod ? "▴" : "▾"}
+          </button>
+        </div>
+        {showMethod && (
+          <div className="method-note">
+            On-page SEO is measured live from your website. AI &amp; search visibility and local presence are
+            derived from live Google search results for {cityName}. We only report what the scan can actually
+            show you — no invented numbers.
+          </div>
+        )}
         <div className="score-ring">
           <svg width="200" height="200">
             <circle cx="100" cy="100" r={RING_R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="14" />
@@ -413,7 +441,15 @@ export default function Results({
         ))}
       </div>
 
-      <div {...rv("cta-band", 6)}>
+      <div {...rv("trust-strip", 6)}>
+        <span><b>Real data</b>, not guesswork</span>
+        <span className="ts-dot" aria-hidden="true">·</span>
+        <span>Built for <b>franchise &amp; OEM</b> dealers</span>
+        <span className="ts-dot" aria-hidden="true">·</span>
+        <span><b>90-day</b> plan to outrank your market</span>
+      </div>
+
+      <div {...rv("cta-band", 7)}>
         <div className="cta-text">
           <span className="urgency">
             ●&nbsp; {weakest ? <>Start here: <b>{PILLAR_META[weakest].label}</b></> : "Your biggest opportunity right now"}
@@ -441,6 +477,19 @@ export default function Results({
       </div>
 
       <div className="footnote">A3 Brands · Automotive SEO &amp; Dealer Performance · The numbers don&apos;t lie.</div>
+
+      {/* sticky CTA that follows on scroll so the action is always one tap away */}
+      <div className={`result-sticky${showSticky ? " show" : ""}`}>
+        <div className="rs-score" style={{ color: tn.c }}>
+          {pct}<span>/100</span>
+        </div>
+        <div className="rs-label">
+          Visibility score &middot; <b>{dealerName}</b>
+        </div>
+        <button className="btn btn-primary" onClick={bookCall}>
+          Book a strategy call
+        </button>
+      </div>
     </section>
   );
 }
